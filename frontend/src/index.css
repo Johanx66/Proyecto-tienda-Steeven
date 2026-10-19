@@ -1,0 +1,26 @@
+body {
+  background-color: #f8f9fa;
+}
+
+.product-card-img {
+  height: 180px;
+  object-fit: cover;
+}
+
+.hero-section {
+  background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+  color: white;
+  padding: 3rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 0.7rem;
+}
+
+.status-badge {
+  font-size: 0.75rem;
+}
