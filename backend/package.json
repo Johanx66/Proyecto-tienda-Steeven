@@ -1,6 +1,6 @@
 {
   "name": "tienda-frescos-backend",
-  "version": "1.0.0",
+  "version": "2.1.0",
   "description": "Backend para tienda de productos frescos con confirmación por correo",
   "main": "src/server.js",
   "scripts": {

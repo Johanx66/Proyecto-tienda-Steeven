@@ -1,6 +1,6 @@
 {
   "name": "proyecto-tienda-steveen",
-  "version": "1.0.0",
+  "version": "2.1.0",
   "description": "Tienda Web de Productos Frescos con Confirmación por Correo Electrónico",
   "private": true,
   "scripts": {
