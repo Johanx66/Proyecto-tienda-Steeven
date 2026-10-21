@@ -83,14 +83,14 @@ export default function Checkout() {
                   <Form.Control.Feedback type="invalid">{errors.direccion_envio?.message}</Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label>Teléfono de verificación</Form.Label>
-                  <Form.Control value={user?.telefono || ''} disabled />
+                  <Form.Label>Correo de confirmación</Form.Label>
+                  <Form.Control value={user?.email || ''} disabled />
                   <Form.Text className="text-muted">
-                    Recibirás una llamada a este número para autorizar tu compra.
+                    Recibirás un correo con un enlace para autorizar tu compra.
                   </Form.Text>
                 </Form.Group>
                 <Button type="submit" variant="success" size="lg" disabled={submitting}>
-                  {submitting ? 'Procesando...' : 'Pagar y verificar por teléfono'}
+                  {submitting ? 'Procesando...' : 'Pagar y confirmar por correo'}
                 </Button>
               </Form>
             </Card.Body>
@@ -120,6 +120,7 @@ export default function Checkout() {
       <VerificationModal
         show={showModal}
         pedidoId={pedidoId}
+        email={user?.email}
         onClose={handleModalClose}
         onConfirmed={() => {}}
       />

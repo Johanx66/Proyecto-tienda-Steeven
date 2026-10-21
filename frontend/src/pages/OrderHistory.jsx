@@ -8,7 +8,7 @@ const ESTADO_VARIANTS = {
   PENDIENTE_VERIFICACION: 'warning',
   CONFIRMADO: 'success',
   CANCELADO_FRAUDE: 'danger',
-  NO_CONTESTO: 'secondary',
+  NO_CONFIRMADO: 'secondary',
   DESPACHADO: 'info',
 };
 

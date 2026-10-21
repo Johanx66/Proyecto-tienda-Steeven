@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Nav, Card } from 'react-bootstrap';
 import AdminProducts from './AdminProducts';
 import AdminOrders from './AdminOrders';
-import AdminCallLogs from './AdminCallLogs';
 
 export default function AdminPanel() {
   const [tab, setTab] = useState('pedidos');
@@ -18,14 +17,10 @@ export default function AdminPanel() {
           <Nav.Item>
             <Nav.Link eventKey="productos">Inventario</Nav.Link>
           </Nav.Item>
-          <Nav.Item>
-            <Nav.Link eventKey="auditoria">Auditoría de Llamadas</Nav.Link>
-          </Nav.Item>
         </Nav>
 
         {tab === 'pedidos' && <AdminOrders />}
         {tab === 'productos' && <AdminProducts />}
-        {tab === 'auditoria' && <AdminCallLogs />}
       </Card.Body>
     </Card>
   );

@@ -1,8 +1,8 @@
-# Tienda Web de Productos Frescos con Verificación Telefónica (Voice 2FA)
+# Tienda Web de Productos Frescos con Confirmación por Correo
 
 Plataforma e-commerce monomarca para venta de productos frescos (frutas y verduras)
-que verifica cada pedido mediante una llamada automatizada de **Twilio**. El cliente
-autoriza (tecla `1`) o reporta fraude (tecla `2`) usando el teclado telefónico (DTMF).
+que confirma cada pedido mediante un enlace enviado por **correo electrónico**. El
+cliente autoriza su compra o reporta fraude con un clic desde el email.
 
 ## Tecnologías
 
@@ -13,7 +13,7 @@ autoriza (tecla `1`) o reporta fraude (tecla `2`) usando el teclado telefónico 
 | Auth | JWT + bcryptjs |
 | Formularios | React Hook Form + Zod |
 | Estado | Context API (Auth + Cart) |
-| Voice 2FA | Twilio Voice + Ngrok |
+| Confirmación | Enlace por correo con Nodemailer (SMTP) |
 
 ## Estructura
 
@@ -34,7 +34,7 @@ autoriza (tecla `1`) o reporta fraude (tecla `2`) usando el teclado telefónico 
 
 - Node.js 18+
 - PostgreSQL 14+ — **o** Docker + Docker Compose para levantar todo el stack
-- (Opcional) Cuenta de Twilio + Ngrok para el flujo Voice 2FA real
+- (Opcional) Cuenta SMTP (p. ej. Gmail con contraseña de aplicación) para envío real de correos
 
 ## Puesta en marcha
 
@@ -54,8 +54,8 @@ docker compose up --build
 | PostgreSQL | localhost:5432 (postgres / postgres) |
 
 El frontend servido por Nginx hace *proxy* de `/api` hacia el backend, por lo que
-no hay problemas de CORS. Para Twilio, copia `.env.example` a `.env` en la raíz y
-rellena las credenciales.
+no hay problemas de CORS. Para el envío de correos, copia `.env.example` a `.env`
+en la raíz y rellena las credenciales SMTP (o deja `MAIL_MOCK=true`).
 
 Para reiniciar desde cero (borra los datos de la base):
 
@@ -93,7 +93,7 @@ psql -U postgres -d tienda_frescos -f backend/database/seed.sql   # datos de eje
 
 ```bash
 cd backend
-cp .env.example .env     # edita credenciales de PostgreSQL y Twilio
+cp .env.example .env     # edita credenciales de PostgreSQL y SMTP
 npm install
 npm run dev              # http://localhost:5000
 ```
@@ -107,20 +107,31 @@ npm install
 npm run dev              # http://localhost:5173
 ```
 
-#### 4. Twilio + Ngrok (para Voice 2FA real)
+#### 4. Correo electrónico (para confirmación real)
 
-```bash
-ngrok http 5000
-```
+Por defecto el backend arranca con `MAIL_MOCK=true`: en lugar de enviar correos,
+imprime en la consola el enlace de confirmación de cada pedido (útil para probar
+sin configurar nada). Para enviar correos reales:
 
-- Copia la URL de Ngrok en `backend/.env` → `WEBHOOK_BASE_URL` (o `.env` raíz si
-  usas Docker Compose).
-- En la consola de Twilio, configura la **Voice URL** del número como:
-  `https://<tu-ngrok>/api/webhooks/twilio/outbound`
+1. Usa una cuenta Gmail y genera una **contraseña de aplicación**
+   (Cuenta de Google → Seguridad → Verificación en dos pasos → Contraseñas de aplicaciones).
+2. En `backend/.env` (o `.env` raíz si usas Docker Compose) configura:
 
-> Si no configuras Twilio, el resto del sistema (registro, catálogo, carrito,
-> panel admin, historial) funciona igual. La llamada fallará silenciosamente y
-> se registrará como `FALLIDA` en el log de auditoría.
+   ```
+   MAIL_MOCK=false
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=465
+   SMTP_SECURE=true
+   SMTP_USER=tu_correo@gmail.com
+   SMTP_PASS=tu_app_password
+   MAIL_FROM=Frutería Web <tu_correo@gmail.com>
+   ```
+
+3. Ajusta `WEBHOOK_BASE_URL` a la URL pública desde la que se abrirá el enlace del
+   correo (`http://localhost:5000` en local, o tu dominio/ngrok si pruebas desde
+   otro dispositivo).
+
+> Los enlaces del correo apuntan a `GET /api/orders/confirm?token=...&action=approve|reject`.
 
 #### Ejecutar backend + frontend juntos (desde la raíz)
 
@@ -142,11 +153,16 @@ DB_USER=postgres
 DB_PASSWORD=tu_password
 JWT_SECRET=una_clave_secreta_larga
 JWT_EXPIRES_IN=7d
-TWILIO_ACCOUNT_SID=ACxxxx
-TWILIO_AUTH_TOKEN=xxxx
-TWILIO_PHONE_NUMBER=+1234567890
+MAIL_MOCK=false
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=tu_correo@gmail.com
+SMTP_PASS=tu_app_password
+MAIL_FROM=Frutería Web <tu_correo@gmail.com>
+VERIFICATION_TOKEN_TTL_MINUTES=30
 FRONTEND_URL=http://localhost:5173
-WEBHOOK_BASE_URL=https://xxxx.ngrok-free.app
+WEBHOOK_BASE_URL=http://localhost:5000
 ```
 
 ## API
@@ -158,22 +174,20 @@ WEBHOOK_BASE_URL=https://xxxx.ngrok-free.app
 | GET | `/api/productos` | — | Productos activos |
 | POST | `/api/productos` | Admin | Crear producto |
 | PUT | `/api/productos/:id` | Admin | Editar producto |
-| POST | `/api/pedidos` | Cliente | Crear pedido + dispara llamada |
+| POST | `/api/pedidos` | Cliente | Crear pedido + enviar correo de confirmación |
 | GET | `/api/pedidos/mis-pedidos` | Cliente | Historial del usuario |
 | GET | `/api/pedidos/admin` | Admin | Todos los pedidos |
 | PUT | `/api/pedidos/:id/despachar` | Admin | Marcar como despachado |
-| GET | `/api/registros-llamadas` | Admin | Log de auditoría |
-| POST | `/api/webhooks/twilio/outbound` | Twilio | Devuelve TwiML `<Gather>` |
-| POST | `/api/webhooks/twilio/response` | Twilio | Procesa DTMF (1/2) |
+| GET | `/api/orders/confirm` | — | Enlace del correo: `?token=...&action=approve\|reject` |
 
-## Flujo Voice 2FA
+## Flujo de Confirmación por Correo
 
 1. El cliente crea un pedido → estado `PENDIENTE_VERIFICACION`.
-2. El backend inicia una llamada de Twilio al teléfono registrado.
-3. El mensaje de voz pide presionar `1` (autorizar) o `2` (fraude).
-4. `1` → pedido `CONFIRMADO` y se descuenta el stock.
-   `2` → pedido `CANCELADO_FRAUDE` y se emite alerta de seguridad.
-5. Sin respuesta → reintentos automáticos (máx. 3) → `NO_CONTESTO`.
+2. El backend genera un token y envía un correo al cliente con dos enlaces.
+3. El enlace **Autorizar** → pedido `CONFIRMADO` y se descuenta el stock.
+   El enlace **No reconozco esta compra** → pedido `CANCELADO_FRAUDE` y alerta de seguridad.
+4. Si el enlace expira sin usarse → el pedido queda en `PENDIENTE_VERIFICACION`
+   (puede marcarse como `NO_CONFIRMADO`).
 
 ## Datos de ejemplo (seed)
 

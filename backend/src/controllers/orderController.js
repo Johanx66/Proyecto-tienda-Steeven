@@ -1,6 +1,6 @@
 const pool = require('../config/db');
 const Order = require('../models/Order');
-const { processOrderWithCall } = require('../services/orderService');
+const { processOrderWithEmail } = require('../services/orderService');
 const { ORDER_STATES } = require('../utils/constants');
 
 async function create(req, res, next) {
@@ -48,7 +48,9 @@ async function create(req, res, next) {
 
     await client.query('COMMIT');
 
-    processOrderWithCall(order.id, req.user.telefono);
+    processOrderWithEmail(order, req.user).catch((err) =>
+      console.error(`Error al procesar verificación del pedido ${order.id}:`, err.message)
+    );
 
     res.status(201).json(order);
   } catch (err) {

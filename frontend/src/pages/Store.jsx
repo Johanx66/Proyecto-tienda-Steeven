@@ -25,7 +25,7 @@ export default function Store() {
     <>
       <div className="hero-section text-center mb-4">
         <h1 className="fw-bold">Productos Frescos a tu Puerta</h1>
-        <p className="mb-0">Frutas y verduras de la mejor calidad, con verificación segura de tu compra.</p>
+        <p className="mb-0">Frutas y verduras de la mejor calidad, con confirmación segura de tu compra por correo.</p>
       </div>
 
       <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">

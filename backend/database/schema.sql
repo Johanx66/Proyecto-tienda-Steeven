@@ -36,12 +36,11 @@ CREATE TABLE IF NOT EXISTS detalle_pedidos (
     subtotal DECIMAL(10, 2) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS registros_llamadas (
+CREATE TABLE IF NOT EXISTS verificaciones_pedido (
     id SERIAL PRIMARY KEY,
     pedido_id INT REFERENCES pedidos(id) ON DELETE CASCADE,
-    telefono_destino VARCHAR(20) NOT NULL,
-    estado_llamada VARCHAR(30),
-    respuesta_dtmf VARCHAR(5),
-    intentos INT DEFAULT 1,
-    fecha_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    token VARCHAR(128) UNIQUE NOT NULL,
+    estado VARCHAR(20) DEFAULT 'PENDIENTE',
+    expira_en TIMESTAMP NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

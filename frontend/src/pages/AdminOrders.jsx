@@ -8,11 +8,11 @@ const ESTADO_VARIANTS = {
   PENDIENTE_VERIFICACION: 'warning',
   CONFIRMADO: 'success',
   CANCELADO_FRAUDE: 'danger',
-  NO_CONTESTO: 'secondary',
+  NO_CONFIRMADO: 'secondary',
   DESPACHADO: 'info',
 };
 
-const ESTADOS = ['', 'PENDIENTE_VERIFICACION', 'CONFIRMADO', 'CANCELADO_FRAUDE', 'NO_CONTESTO', 'DESPACHADO'];
+const ESTADOS = ['', 'PENDIENTE_VERIFICACION', 'CONFIRMADO', 'CANCELADO_FRAUDE', 'NO_CONFIRMADO', 'DESPACHADO'];
 
 export default function AdminOrders() {
   const [estado, setEstado] = useState('');
@@ -47,6 +47,7 @@ export default function AdminOrders() {
             <th>#</th>
             <th>Cliente</th>
             <th>Teléfono</th>
+            <th>Email</th>
             <th>Total</th>
             <th>Estado</th>
             <th>Fecha</th>
@@ -59,6 +60,7 @@ export default function AdminOrders() {
               <td>{o.id}</td>
               <td>{o.cliente_nombre}</td>
               <td>{o.cliente_telefono}</td>
+              <td>{o.cliente_email}</td>
               <td className="text-success fw-bold">${parseFloat(o.monto_total).toFixed(2)}</td>
               <td>
                 <Badge bg={ESTADO_VARIANTS[o.estado] || 'secondary'} className="status-badge">{o.estado}</Badge>

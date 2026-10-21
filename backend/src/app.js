@@ -3,8 +3,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
-const webhookRoutes = require('./routes/webhooks');
-const callLogRoutes = require('./routes/callLogs');
+const { confirm } = require('./controllers/orderVerificationController');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -16,8 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/productos', productRoutes);
 app.use('/api/pedidos', orderRoutes);
-app.use('/api/registros-llamadas', callLogRoutes);
-app.use('/api/webhooks/twilio', webhookRoutes);
+app.get('/api/orders/confirm', confirm);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 

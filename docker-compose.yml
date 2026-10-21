@@ -37,10 +37,15 @@ services:
       JWT_SECRET: cambia_esta_clave_secreta_en_produccion_1234567890
       JWT_EXPIRES_IN: 7d
       FRONTEND_URL: http://localhost:5173
-      WEBHOOK_BASE_URL: ${WEBHOOK_BASE_URL:-https://xxxx.ngrok-free.app}
-      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
-      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
-      TWILIO_PHONE_NUMBER: ${TWILIO_PHONE_NUMBER:-}
+      WEBHOOK_BASE_URL: ${WEBHOOK_BASE_URL:-http://localhost:5000}
+      MAIL_MOCK: ${MAIL_MOCK:-true}
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-465}
+      SMTP_SECURE: ${SMTP_SECURE:-true}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-Frutería Web <no-reply@fruteria.local>}
+      VERIFICATION_TOKEN_TTL_MINUTES: ${VERIFICATION_TOKEN_TTL_MINUTES:-30}
     ports:
       - "5000:5000"
 
