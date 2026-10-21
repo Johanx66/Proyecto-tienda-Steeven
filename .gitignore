@@ -1,8 +1,49 @@
+# ===== Dependencias y builds =====
 node_modules/
 dist/
-.env
-*.log
-.DS_Store
+build/
 coverage/
-private.key
+.vite/
+
+# ===== Variables de entorno (NUNCA subir credenciales reales) =====
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/.env
+*.env.local
+
+# ===== Secretos y certificados =====
 *.key
+*.pem
+private.key
+*.p12
+
+# ===== Logs =====
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+
+# ===== Sistema operativo / editor =====
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+*.code-workspace
+
+# ===== Caches =====
+.eslintcache
+.cache/
+npm-cache/
+__pycache__/
+
+# ===== Docker =====
+*.pid
+
+# ===== Backups de base de datos =====
+*.sql.gz
+*.dump
+backup/

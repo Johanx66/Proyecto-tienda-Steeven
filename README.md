@@ -205,3 +205,13 @@ Regístrate normalmente y luego actualiza el rol en la base de datos:
 ```sql
 UPDATE usuarios SET rol = 'ADMIN' WHERE email = 'tu@email.com';
 ```
+
+## Documentación
+
+- **Wiki del proyecto:** https://github.com/Johanx66/Proyecto-tienda-Steeven/wiki
+  - [Arquitectura](https://github.com/Johanx66/Proyecto-tienda-Steeven/wiki/Arquitectura)
+  - [Matriz de Riesgos](https://github.com/Johanx66/Proyecto-tienda-Steeven/wiki/Matriz-de-Riesgos)
+  - [Diagrama de clases UML](https://github.com/Johanx66/Proyecto-tienda-Steeven/wiki/Diagrama-de-clases-UML)
+  - [Guía de desarrollo](https://github.com/Johanx66/Proyecto-tienda-Steeven/wiki/Guia-de-desarrollo)
+- **Tablero de tareas (GitHub Projects):** https://github.com/users/Johanx66/projects/4
+- **Documentos locales:** [`docs/`](docs) — arquitectura, UML y matriz de riesgos.
