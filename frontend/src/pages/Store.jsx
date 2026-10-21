@@ -15,9 +15,7 @@ export default function Store() {
   const [search, setSearch] = useState('');
   const [showCart, setShowCart] = useState(false);
 
-  const filtered = products.filter((p) =>
-    p.nombre.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = products.filter((p) => p.nombre.toLowerCase().includes(search.toLowerCase()));
 
   if (loading) return <LoadingSpinner message="Cargando productos frescos..." />;
 
@@ -25,7 +23,9 @@ export default function Store() {
     <>
       <div className="hero-section text-center mb-4">
         <h1 className="fw-bold">Productos Frescos a tu Puerta</h1>
-        <p className="mb-0">Frutas y verduras de la mejor calidad, con confirmación segura de tu compra por correo.</p>
+        <p className="mb-0">
+          Frutas y verduras de la mejor calidad, con confirmación segura de tu compra por correo.
+        </p>
       </div>
 
       <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
@@ -38,10 +38,16 @@ export default function Store() {
             style={{ maxWidth: 250 }}
           />
           {isAuthenticated && (
-            <Button variant="outline-success" onClick={() => setShowCart(true)} className="position-relative">
+            <Button
+              variant="outline-success"
+              onClick={() => setShowCart(true)}
+              className="position-relative"
+            >
               🛒 Carrito
               {count > 0 && (
-                <Badge bg="danger" className="cart-badge rounded-pill">{count}</Badge>
+                <Badge bg="danger" className="cart-badge rounded-pill">
+                  {count}
+                </Badge>
               )}
             </Button>
           )}

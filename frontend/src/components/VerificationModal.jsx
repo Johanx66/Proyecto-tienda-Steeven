@@ -54,7 +54,12 @@ export default function VerificationModal({ show, pedidoId, email, onClose, onCo
   const finalizado = estado !== 'PENDIENTE_VERIFICACION';
 
   return (
-    <Modal show={show} onHide={finalizado ? onClose : undefined} backdrop={finalizado ? true : 'static'} keyboard={finalizado}>
+    <Modal
+      show={show}
+      onHide={finalizado ? onClose : undefined}
+      backdrop={finalizado ? true : 'static'}
+      keyboard={finalizado}
+    >
       <Modal.Header>
         <Modal.Title>Confirmación por Correo en Curso</Modal.Title>
       </Modal.Header>
@@ -62,14 +67,18 @@ export default function VerificationModal({ show, pedidoId, email, onClose, onCo
         {!finalizado ? (
           <>
             <div className="mb-3">
-              <div className="spinner-border text-success" role="status" style={{ width: '3rem', height: '3rem' }}>
+              <div
+                className="spinner-border text-success"
+                role="status"
+                style={{ width: '3rem', height: '3rem' }}
+              >
                 <span className="visually-hidden">Enviando correo...</span>
               </div>
             </div>
             <h5>✉️ Te enviamos un correo electrónico</h5>
             <p className="text-muted">
-              Revisa la bandeja de <strong>{email}</strong> y abre el enlace para autorizar tu pedido.
-              Si no reconoces esta compra, usa el enlace de reporte.
+              Revisa la bandeja de <strong>{email}</strong> y abre el enlace para autorizar tu
+              pedido. Si no reconoces esta compra, usa el enlace de reporte.
             </p>
             <p className="text-muted small">Tiempo transcurrido: {elapsed}s</p>
           </>
@@ -78,7 +87,9 @@ export default function VerificationModal({ show, pedidoId, email, onClose, onCo
             <h5 className={`text-${label.variant} mb-3`}>{label.text}</h5>
             {estado === 'CONFIRMADO' && <p>Tu pedido ha sido verificado y será despachado.</p>}
             {estado === 'CANCELADO_FRAUDE' && <p>Un agente de seguridad revisará el caso.</p>}
-            {estado === 'NO_CONFIRMADO' && <p>El enlace de confirmación no fue utilizado. Intenta nuevamente.</p>}
+            {estado === 'NO_CONFIRMADO' && (
+              <p>El enlace de confirmación no fue utilizado. Intenta nuevamente.</p>
+            )}
           </>
         )}
       </Modal.Body>

@@ -24,12 +24,7 @@ export default function ProductCard({ product }) {
             {sinStock ? 'Agotado' : `Stock: ${product.stock}`}
           </Badge>
         </div>
-        <Button
-          variant="success"
-          size="sm"
-          disabled={sinStock}
-          onClick={() => addItem(product)}
-        >
+        <Button variant="success" size="sm" disabled={sinStock} onClick={() => addItem(product)}>
           Agregar al carrito
         </Button>
       </Card.Body>

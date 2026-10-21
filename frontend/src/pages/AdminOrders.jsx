@@ -12,7 +12,14 @@ const ESTADO_VARIANTS = {
   DESPACHADO: 'info',
 };
 
-const ESTADOS = ['', 'PENDIENTE_VERIFICACION', 'CONFIRMADO', 'CANCELADO_FRAUDE', 'NO_CONFIRMADO', 'DESPACHADO'];
+const ESTADOS = [
+  '',
+  'PENDIENTE_VERIFICACION',
+  'CONFIRMADO',
+  'CANCELADO_FRAUDE',
+  'NO_CONFIRMADO',
+  'DESPACHADO',
+];
 
 export default function AdminOrders() {
   const [estado, setEstado] = useState('');
@@ -34,9 +41,15 @@ export default function AdminOrders() {
     <>
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h5 className="mb-0">Gestión de Pedidos</h5>
-        <Form.Select style={{ maxWidth: 250 }} value={estado} onChange={(e) => setEstado(e.target.value)}>
+        <Form.Select
+          style={{ maxWidth: 250 }}
+          value={estado}
+          onChange={(e) => setEstado(e.target.value)}
+        >
           {ESTADOS.map((e) => (
-            <option key={e} value={e}>{e || 'Todos los estados'}</option>
+            <option key={e} value={e}>
+              {e || 'Todos los estados'}
+            </option>
           ))}
         </Form.Select>
       </div>
@@ -63,12 +76,16 @@ export default function AdminOrders() {
               <td>{o.cliente_email}</td>
               <td className="text-success fw-bold">${parseFloat(o.monto_total).toFixed(2)}</td>
               <td>
-                <Badge bg={ESTADO_VARIANTS[o.estado] || 'secondary'} className="status-badge">{o.estado}</Badge>
+                <Badge bg={ESTADO_VARIANTS[o.estado] || 'secondary'} className="status-badge">
+                  {o.estado}
+                </Badge>
               </td>
               <td>{new Date(o.fecha_creacion).toLocaleString('es-MX')}</td>
               <td>
                 {o.estado === 'CONFIRMADO' && (
-                  <Button variant="outline-info" size="sm" onClick={() => handleDespachar(o.id)}>Despachar</Button>
+                  <Button variant="outline-info" size="sm" onClick={() => handleDespachar(o.id)}>
+                    Despachar
+                  </Button>
                 )}
               </td>
             </tr>

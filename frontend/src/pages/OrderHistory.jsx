@@ -42,9 +42,14 @@ export default function OrderHistory() {
                   <tr>
                     <td>{order.id}</td>
                     <td>{new Date(order.fecha_creacion).toLocaleString('es-MX')}</td>
-                    <td className="text-success fw-bold">${parseFloat(order.monto_total).toFixed(2)}</td>
+                    <td className="text-success fw-bold">
+                      ${parseFloat(order.monto_total).toFixed(2)}
+                    </td>
                     <td>
-                      <Badge bg={ESTADO_VARIANTS[order.estado] || 'secondary'} className="status-badge">
+                      <Badge
+                        bg={ESTADO_VARIANTS[order.estado] || 'secondary'}
+                        className="status-badge"
+                      >
                         {order.estado}
                       </Badge>
                     </td>

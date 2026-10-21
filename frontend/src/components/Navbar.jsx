@@ -28,30 +28,42 @@ export default function Navbar() {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto align-items-lg-center">
             <li className="nav-item">
-              <Link className="nav-link" to="/">Tienda</Link>
+              <Link className="nav-link" to="/">
+                Tienda
+              </Link>
             </li>
             {isAuthenticated && (
               <li className="nav-item">
-                <Link className="nav-link" to="/carrito">Carrito</Link>
+                <Link className="nav-link" to="/carrito">
+                  Carrito
+                </Link>
               </li>
             )}
             {isAuthenticated && (
               <li className="nav-item">
-                <Link className="nav-link" to="/mis-pedidos">Mis Pedidos</Link>
+                <Link className="nav-link" to="/mis-pedidos">
+                  Mis Pedidos
+                </Link>
               </li>
             )}
             {isAdmin && (
               <li className="nav-item">
-                <Link className="nav-link" to="/admin">Panel Admin</Link>
+                <Link className="nav-link" to="/admin">
+                  Panel Admin
+                </Link>
               </li>
             )}
             {!isAuthenticated ? (
               <>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/login">Iniciar sesión</Link>
+                  <Link className="nav-link" to="/login">
+                    Iniciar sesión
+                  </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="btn btn-light btn-sm ms-lg-2" to="/register">Registrarse</Link>
+                  <Link className="btn btn-light btn-sm ms-lg-2" to="/register">
+                    Registrarse
+                  </Link>
                 </li>
               </>
             ) : (
@@ -64,7 +76,9 @@ export default function Navbar() {
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end">
                   <li>
-                    <button className="dropdown-item" onClick={handleLogout}>Cerrar sesión</button>
+                    <button className="dropdown-item" onClick={handleLogout}>
+                      Cerrar sesión
+                    </button>
                   </li>
                 </ul>
               </li>

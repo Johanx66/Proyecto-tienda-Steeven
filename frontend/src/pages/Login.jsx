@@ -8,7 +8,11 @@ import useAuth from '../hooks/useAuth';
 import Alert from '../components/Alert';
 
 export default function Login() {
-  const { register: registerField, handleSubmit, formState: { errors } } = useForm({
+  const {
+    register: registerField,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(loginSchema),
   });
   const { login } = useAuth();
@@ -36,14 +40,24 @@ export default function Login() {
               <Form.Group className="mb-3">
                 <Form.Label>Email</Form.Label>
                 <Form.Control type="email" {...registerField('email')} isInvalid={!!errors.email} />
-                <Form.Control.Feedback type="invalid">{errors.email?.message}</Form.Control.Feedback>
+                <Form.Control.Feedback type="invalid">
+                  {errors.email?.message}
+                </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Contraseña</Form.Label>
-                <Form.Control type="password" {...registerField('contrasenia')} isInvalid={!!errors.contrasenia} />
-                <Form.Control.Feedback type="invalid">{errors.contrasenia?.message}</Form.Control.Feedback>
+                <Form.Control
+                  type="password"
+                  {...registerField('contrasenia')}
+                  isInvalid={!!errors.contrasenia}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.contrasenia?.message}
+                </Form.Control.Feedback>
               </Form.Group>
-              <Button type="submit" variant="success" className="w-100">Ingresar</Button>
+              <Button type="submit" variant="success" className="w-100">
+                Ingresar
+              </Button>
             </Form>
             <p className="text-center mt-3 mb-0">
               ¿No tienes cuenta? <Link to="/register">Regístrate</Link>

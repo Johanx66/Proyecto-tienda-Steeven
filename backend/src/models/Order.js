@@ -72,10 +72,10 @@ const Order = {
   },
 
   async updateStatus(id, estado) {
-    const { rows } = await pool.query(
-      'UPDATE pedidos SET estado = $2 WHERE id = $1 RETURNING *',
-      [id, estado]
-    );
+    const { rows } = await pool.query('UPDATE pedidos SET estado = $2 WHERE id = $1 RETURNING *', [
+      id,
+      estado,
+    ]);
     return rows[0] || null;
   },
 };

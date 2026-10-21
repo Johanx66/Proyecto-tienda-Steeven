@@ -14,10 +14,9 @@ const OrderVerification = {
   },
 
   async findByToken(token) {
-    const { rows } = await pool.query(
-      'SELECT * FROM verificaciones_pedido WHERE token = $1',
-      [token]
-    );
+    const { rows } = await pool.query('SELECT * FROM verificaciones_pedido WHERE token = $1', [
+      token,
+    ]);
     return rows[0] || null;
   },
 

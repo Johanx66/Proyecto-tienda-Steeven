@@ -11,7 +11,12 @@ function handleValidation(req, res, next) {
 const registerRules = [
   body('nombre').trim().notEmpty().withMessage('Nombre es requerido').isLength({ max: 100 }),
   body('email').trim().isEmail().withMessage('Email inválido').normalizeEmail(),
-  body('telefono').trim().notEmpty().withMessage('Teléfono es requerido').matches(/^\+?[0-9]{8,15}$/).withMessage('Teléfono inválido (formato E.164)'),
+  body('telefono')
+    .trim()
+    .notEmpty()
+    .withMessage('Teléfono es requerido')
+    .matches(/^\+?[0-9]{8,15}$/)
+    .withMessage('Teléfono inválido (formato E.164)'),
   body('contrasenia').isLength({ min: 6 }).withMessage('Contraseña mínimo 6 caracteres'),
 ];
 

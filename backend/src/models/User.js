@@ -15,7 +15,14 @@ const User = {
     return rows[0] || null;
   },
 
-  async create({ nombre, email, telefono, contrasenia, rol = ROLES.CLIENTE, direccion_envio = null }) {
+  async create({
+    nombre,
+    email,
+    telefono,
+    contrasenia,
+    rol = ROLES.CLIENTE,
+    direccion_envio = null,
+  }) {
     const { rows } = await pool.query(
       `INSERT INTO usuarios (nombre, email, telefono, contrasenia, rol, direccion_envio)
        VALUES ($1, $2, $3, $4, $5, $6)

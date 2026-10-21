@@ -31,62 +31,77 @@ async function confirm(req, res, next) {
   const { token, action } = req.query;
 
   if (!token || !['approve', 'reject'].includes(action)) {
-    return res.status(400).send(renderPage({
-      title: 'Enlace inválido',
-      message: 'El enlace de confirmación no es válido.',
-      variant: 'danger',
-    }));
+    return res.status(400).send(
+      renderPage({
+        title: 'Enlace inválido',
+        message: 'El enlace de confirmación no es válido.',
+        variant: 'danger',
+      })
+    );
   }
 
   try {
     const verification = await OrderVerification.findByToken(token);
     if (!verification) {
-      return res.status(404).send(renderPage({
-        title: 'Enlace no encontrado',
-        message: 'No encontramos esta solicitud de confirmación.',
-        variant: 'danger',
-      }));
+      return res.status(404).send(
+        renderPage({
+          title: 'Enlace no encontrado',
+          message: 'No encontramos esta solicitud de confirmación.',
+          variant: 'danger',
+        })
+      );
     }
 
     if (verification.estado !== VERIFICATION_STATES.PENDIENTE) {
-      return res.status(409).send(renderPage({
-        title: 'Solicitud ya procesada',
-        message: 'Este pedido ya fue confirmado o cancelado anteriormente.',
-        variant: 'secondary',
-      }));
+      return res.status(409).send(
+        renderPage({
+          title: 'Solicitud ya procesada',
+          message: 'Este pedido ya fue confirmado o cancelado anteriormente.',
+          variant: 'secondary',
+        })
+      );
     }
 
     if (new Date(verification.expira_en) < new Date()) {
       await OrderVerification.updateEstado(verification.id, VERIFICATION_STATES.EXPIRADO);
-      return res.status(410).send(renderPage({
-        title: 'Enlace expirado',
-        message: 'El enlace de confirmación ha expirado. Realiza un nuevo pedido.',
-        variant: 'secondary',
-      }));
+      return res.status(410).send(
+        renderPage({
+          title: 'Enlace expirado',
+          message: 'El enlace de confirmación ha expirado. Realiza un nuevo pedido.',
+          variant: 'secondary',
+        })
+      );
     }
 
     const pedido = await Order.findById(verification.pedido_id);
     if (!pedido) {
-      return res.status(404).send(renderPage({
-        title: 'Pedido no encontrado',
-        message: 'El pedido asociado ya no existe.',
-        variant: 'danger',
-      }));
+      return res.status(404).send(
+        renderPage({
+          title: 'Pedido no encontrado',
+          message: 'El pedido asociado ya no existe.',
+          variant: 'danger',
+        })
+      );
     }
 
     if (pedido.estado !== ORDER_STATES.PENDIENTE_VERIFICACION) {
-      return res.status(409).send(renderPage({
-        title: 'Pedido ya procesado',
-        message: `El pedido #${pedido.id} ya se encuentra en estado ${pedido.estado}.`,
-        variant: 'secondary',
-      }));
+      return res.status(409).send(
+        renderPage({
+          title: 'Pedido ya procesado',
+          message: `El pedido #${pedido.id} ya se encuentra en estado ${pedido.estado}.`,
+          variant: 'secondary',
+        })
+      );
     }
 
     if (action === 'approve') {
       const client = await pool.connect();
       try {
         await client.query('BEGIN');
-        await client.query('UPDATE pedidos SET estado = $2 WHERE id = $1', [pedido.id, ORDER_STATES.CONFIRMADO]);
+        await client.query('UPDATE pedidos SET estado = $2 WHERE id = $1', [
+          pedido.id,
+          ORDER_STATES.CONFIRMADO,
+        ]);
         const { rows: detalles } = await client.query(
           'SELECT producto_id, cantidad FROM detalle_pedidos WHERE pedido_id = $1',
           [pedido.id]
@@ -103,21 +118,27 @@ async function confirm(req, res, next) {
       }
       await OrderVerification.updateEstado(verification.id, VERIFICATION_STATES.APROBADO);
       console.log(`Pedido ${pedido.id}: confirmado por correo.`);
-      return res.send(renderPage({
-        title: '¡Pedido confirmado!',
-        message: `Tu pedido #${pedido.id} fue autorizado y será despachado.`,
-        variant: 'success',
-      }));
+      return res.send(
+        renderPage({
+          title: '¡Pedido confirmado!',
+          message: `Tu pedido #${pedido.id} fue autorizado y será despachado.`,
+          variant: 'success',
+        })
+      );
     }
 
     await Order.updateStatus(pedido.id, ORDER_STATES.CANCELADO_FRAUDE);
     await OrderVerification.updateEstado(verification.id, VERIFICATION_STATES.RECHAZADO);
-    console.warn(`ALERTA DE SEGURIDAD: Pedido ${pedido.id} cancelado por fraude. Cliente reportó compra no autorizada.`);
-    return res.send(renderPage({
-      title: 'Pedido cancelado',
-      message: `Tu pedido #${pedido.id} fue cancelado y un agente de seguridad revisará el caso.`,
-      variant: 'danger',
-    }));
+    console.warn(
+      `ALERTA DE SEGURIDAD: Pedido ${pedido.id} cancelado por fraude. Cliente reportó compra no autorizada.`
+    );
+    return res.send(
+      renderPage({
+        title: 'Pedido cancelado',
+        message: `Tu pedido #${pedido.id} fue cancelado y un agente de seguridad revisará el caso.`,
+        variant: 'danger',
+      })
+    );
   } catch (err) {
     next(err);
   }

@@ -21,7 +21,11 @@ export default function Checkout() {
   const [pedidoId, setPedidoId] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(checkoutSchema),
     defaultValues: { direccion_envio: user?.direccion_envio || '' },
   });
@@ -31,7 +35,9 @@ export default function Checkout() {
       <Card className="text-center py-5 shadow-sm">
         <Card.Body>
           <h4>No hay productos para pagar</h4>
-          <Button variant="success" onClick={() => navigate('/')}>Ir a la tienda</Button>
+          <Button variant="success" onClick={() => navigate('/')}>
+            Ir a la tienda
+          </Button>
         </Card.Body>
       </Card>
     );
@@ -80,7 +86,9 @@ export default function Checkout() {
                     {...register('direccion_envio')}
                     isInvalid={!!errors.direccion_envio}
                   />
-                  <Form.Control.Feedback type="invalid">{errors.direccion_envio?.message}</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">
+                    {errors.direccion_envio?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group className="mb-3">
                   <Form.Label>Correo de confirmación</Form.Label>
@@ -103,7 +111,9 @@ export default function Checkout() {
               <ListGroup variant="flush">
                 {items.map((item) => (
                   <ListGroup.Item key={item.producto_id} className="d-flex justify-content-between">
-                    <span>{item.nombre} × {item.cantidad}</span>
+                    <span>
+                      {item.nombre} × {item.cantidad}
+                    </span>
                     <span>${(item.precio * item.cantidad).toFixed(2)}</span>
                   </ListGroup.Item>
                 ))}

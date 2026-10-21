@@ -12,7 +12,9 @@ async function register(req, res, next) {
     }
     const hashed = await bcrypt.hash(contrasenia, 10);
     const user = await User.create({ nombre, email, telefono, contrasenia: hashed });
-    const token = jwt.sign({ id: user.id, rol: user.rol }, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
+    const token = jwt.sign({ id: user.id, rol: user.rol }, jwtConfig.secret, {
+      expiresIn: jwtConfig.expiresIn,
+    });
     res.status(201).json({ token, user });
   } catch (err) {
     next(err);
@@ -30,7 +32,9 @@ async function login(req, res, next) {
     if (!valid) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
-    const token = jwt.sign({ id: user.id, rol: user.rol }, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
+    const token = jwt.sign({ id: user.id, rol: user.rol }, jwtConfig.secret, {
+      expiresIn: jwtConfig.expiresIn,
+    });
     const { contrasenia: _, ...safeUser } = user;
     res.json({ token, user: safeUser });
   } catch (err) {

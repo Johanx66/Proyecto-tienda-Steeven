@@ -26,7 +26,9 @@ async function create(req, res, next) {
       }
       if (product.stock < item.cantidad) {
         await client.query('ROLLBACK');
-        return res.status(400).json({ error: `Stock insuficiente para ${product.nombre}. Disponible: ${product.stock}` });
+        return res.status(400).json({
+          error: `Stock insuficiente para ${product.nombre}. Disponible: ${product.stock}`,
+        });
       }
       const subtotal = parseFloat(product.precio) * item.cantidad;
       montoTotal += subtotal;
@@ -44,7 +46,10 @@ async function create(req, res, next) {
       items: processedItems,
     });
 
-    await client.query('UPDATE usuarios SET direccion_envio = $2 WHERE id = $1', [usuarioId, direccion_envio]);
+    await client.query('UPDATE usuarios SET direccion_envio = $2 WHERE id = $1', [
+      usuarioId,
+      direccion_envio,
+    ]);
 
     await client.query('COMMIT');
 

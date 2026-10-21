@@ -40,10 +40,10 @@ const Product = {
   },
 
   async decrementStock(client, productId, quantity) {
-    await client.query(
-      'UPDATE productos SET stock = stock - $2 WHERE id = $1 AND stock >= $2',
-      [productId, quantity]
-    );
+    await client.query('UPDATE productos SET stock = stock - $2 WHERE id = $1 AND stock >= $2', [
+      productId,
+      quantity,
+    ]);
   },
 };
 

@@ -14,7 +14,12 @@ export default function AdminProducts() {
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(productSchema),
   });
 
@@ -30,7 +35,9 @@ export default function AdminProducts() {
     }
   }, []);
 
-  useEffect(() => { fetchProducts(); }, [fetchProducts]);
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   const openCreate = () => {
     setEditing(null);
@@ -85,7 +92,9 @@ export default function AdminProducts() {
     <>
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h5 className="mb-0">Gestión de Stock</h5>
-        <Button variant="success" size="sm" onClick={openCreate}>+ Nuevo producto</Button>
+        <Button variant="success" size="sm" onClick={openCreate}>
+          + Nuevo producto
+        </Button>
       </div>
       <Alert message={error} onClose={() => setError(null)} />
       <Table responsive hover align="middle">
@@ -107,11 +116,19 @@ export default function AdminProducts() {
               <td>${parseFloat(p.precio).toFixed(2)}</td>
               <td>{p.stock}</td>
               <td>
-                <Badge bg={p.activo ? 'success' : 'secondary'}>{p.activo ? 'Activo' : 'Inactivo'}</Badge>
+                <Badge bg={p.activo ? 'success' : 'secondary'}>
+                  {p.activo ? 'Activo' : 'Inactivo'}
+                </Badge>
               </td>
               <td className="d-flex gap-2">
-                <Button variant="outline-primary" size="sm" onClick={() => openEdit(p)}>Editar</Button>
-                <Button variant={p.activo ? 'outline-danger' : 'outline-success'} size="sm" onClick={() => toggleActivo(p)}>
+                <Button variant="outline-primary" size="sm" onClick={() => openEdit(p)}>
+                  Editar
+                </Button>
+                <Button
+                  variant={p.activo ? 'outline-danger' : 'outline-success'}
+                  size="sm"
+                  onClick={() => toggleActivo(p)}
+                >
                   {p.activo ? 'Desactivar' : 'Activar'}
                 </Button>
               </td>
@@ -137,7 +154,12 @@ export default function AdminProducts() {
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Precio</Form.Label>
-              <Form.Control type="number" step="0.01" {...register('precio')} isInvalid={!!errors.precio} />
+              <Form.Control
+                type="number"
+                step="0.01"
+                {...register('precio')}
+                isInvalid={!!errors.precio}
+              />
               <Form.Control.Feedback type="invalid">{errors.precio?.message}</Form.Control.Feedback>
             </Form.Group>
             <Form.Group className="mb-3">
@@ -148,12 +170,18 @@ export default function AdminProducts() {
             <Form.Group className="mb-3">
               <Form.Label>URL de imagen</Form.Label>
               <Form.Control {...register('imagen_url')} isInvalid={!!errors.imagen_url} />
-              <Form.Control.Feedback type="invalid">{errors.imagen_url?.message}</Form.Control.Feedback>
+              <Form.Control.Feedback type="invalid">
+                {errors.imagen_url?.message}
+              </Form.Control.Feedback>
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>Cancelar</Button>
-            <Button type="submit" variant="success">Guardar</Button>
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit" variant="success">
+              Guardar
+            </Button>
           </Modal.Footer>
         </Form>
       </Modal>

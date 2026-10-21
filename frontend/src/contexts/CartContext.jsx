@@ -41,7 +41,9 @@ export function CartProvider({ children }) {
   const updateQuantity = (productoId, cantidad) => {
     setItems((prev) =>
       prev.map((i) =>
-        i.producto_id === productoId ? { ...i, cantidad: Math.max(1, Math.min(cantidad, i.stock)) } : i
+        i.producto_id === productoId
+          ? { ...i, cantidad: Math.max(1, Math.min(cantidad, i.stock)) }
+          : i
       )
     );
   };
