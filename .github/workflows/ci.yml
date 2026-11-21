@@ -108,7 +108,7 @@ jobs:
               f"aws s3 cp s3://{bucket}/releases/{sha}.tar.gz /tmp/tienda-release.tar.gz",
               "mkdir -p /home/ubuntu/tienda",
               "tar -xzf /tmp/tienda-release.tar.gz -C /home/ubuntu/tienda",
-              "cd /home/ubuntu/tienda && docker compose up -d --build",
+              "cd /home/ubuntu/tienda && docker compose --profile production up -d --build",
               "rm -f /tmp/tienda-release.tar.gz",
           ]
           pathlib.Path(os.environ["RUNNER_TEMP"], "ssm-parameters.json").write_text(

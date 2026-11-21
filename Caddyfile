@@ -1,0 +1,7 @@
+www.proyectosteeven.dpdns.org {
+	redir https://proyectosteeven.dpdns.org{uri} permanent
+}
+
+proyectosteeven.dpdns.org {
+	reverse_proxy frontend:80
+}

@@ -2,7 +2,8 @@
 
 Este proyecto se publica en una instancia EC2 con Docker Compose. GitHub Actions
 ejecuta CI en cada cambio y, si pasa en `main`, envía el código a un bucket S3 y
-ordena a la instancia actualizarse mediante Systems Manager (SSM). No se abre SSH
+ordena a la instancia actualizarse mediante Systems Manager (SSM). En producción
+usa el perfil `production` de Compose para incluir Caddy. No se abre SSH
 para GitHub, no se exponen PostgreSQL ni la API y no se guardan llaves AWS en GitHub.
 
 ## 1. Crear la instancia EC2
@@ -15,8 +16,9 @@ En la consola de AWS, abre **EC2 → Launch instance** y configura:
 - Almacenamiento: 20 GB o más.
 - Crea y descarga un par de claves para tu acceso administrativo.
 - Red: asigna una IPv4 pública.
-- Grupo de seguridad: SSH (22) desde **My IP** y HTTP (80) desde cualquier origen.
-  No agregues reglas para 5000, 5432 ni otros puertos de contenedores.
+- Grupo de seguridad: SSH (22) desde **My IP**, HTTP (80) y HTTPS (443) desde
+  cualquier origen. No agregues reglas para 5000, 5432 ni otros puertos de
+  contenedores.
 - En **Advanced details → IAM instance profile**, asigna el rol de instancia de
   la sección 3.
 
@@ -38,8 +40,9 @@ DB_USER=tienda_app
 DB_PASSWORD=REEMPLAZA_POR_UN_SECRETO_ALEATORIO_LARGO
 JWT_SECRET=REEMPLAZA_POR_OTRO_SECRETO_ALEATORIO_LARGO
 JWT_EXPIRES_IN=7d
-FRONTEND_URL=http://IP_PUBLICA_EC2
-WEBHOOK_BASE_URL=http://IP_PUBLICA_EC2
+FRONTEND_URL=https://TU_DOMINIO
+WEBHOOK_BASE_URL=https://TU_DOMINIO
+FRONTEND_PORT=127.0.0.1:8080
 MAIL_MOCK=true
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=465
@@ -51,9 +54,14 @@ VERIFICATION_TOKEN_TTL_MINUTES=30
 ```
 
 Genera valores aleatorios diferentes para `DB_PASSWORD` y `JWT_SECRET`. Para
-correo real, cambia `MAIL_MOCK=false` y completa las variables SMTP. Si luego
-configuras un dominio y HTTPS, actualiza `FRONTEND_URL` y `WEBHOOK_BASE_URL` a
-ese dominio y recrea el contenedor backend.
+correo real, cambia `MAIL_MOCK=false` y completa las variables SMTP.
+`FRONTEND_PORT=127.0.0.1:8080` deja el frontend en el host local; Caddy lo publica
+en los puertos 80 y 443.
+
+Caddy usa el `Caddyfile` del repositorio, obtiene y renueva automáticamente el
+certificado HTTPS y redirige `www` al dominio principal. Antes de desplegar, crea
+registros A para el dominio y `www` que apunten a la Elastic IP, y permite los
+puertos 80 y 443 en el grupo de seguridad.
 
 ## 3. Crear el rol de la instancia EC2
 

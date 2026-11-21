@@ -26,6 +26,7 @@ cliente autoriza su compra o reporta fraude con un clic desde el email.
 │   ├── Dockerfile    build + Nginx
 │   ├── nginx.conf    sirve la SPA y hace proxy de /api
 │   └── src/          contexts, services, hooks, schemas, components, pages
+├── Caddyfile         HTTPS automático y proxy público
 ├── docker-compose.yml  postgres + backend + frontend
 └── package.json      scripts de conveniencia (concurrently)
 ```
@@ -54,8 +55,10 @@ docker compose up --build
 | PostgreSQL | solo accesible dentro de la red privada de Docker |
 
 El frontend servido por Nginx hace *proxy* de `/api` hacia el backend, por lo que
-no hay problemas de CORS. Para el envío de correos, copia `.env.example` a `.env`
-en la raíz y rellena las credenciales SMTP (o deja `MAIL_MOCK=true`).
+no hay problemas de CORS. En el despliegue de producción, Caddy se activa con el
+perfil `production`, termina HTTPS y redirige `www` al dominio principal. Para el
+envío de correos, copia `.env.example` a `.env` en la raíz y rellena las
+credenciales SMTP (o deja `MAIL_MOCK=true`).
 
 Para reiniciar desde cero (borra los datos de la base):
 
