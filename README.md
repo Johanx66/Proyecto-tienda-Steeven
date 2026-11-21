@@ -49,9 +49,9 @@ docker compose up --build
 
 | Servicio | URL |
 |----------|-----|
-| Frontend | http://localhost:5173 |
-| Backend API | http://localhost:5000 |
-| PostgreSQL | localhost:5432 (postgres / postgres) |
+| Frontend | http://localhost |
+| Backend API | accesible a través del proxy `/api` del frontend |
+| PostgreSQL | solo accesible dentro de la red privada de Docker |
 
 El frontend servido por Nginx hace *proxy* de `/api` hacia el backend, por lo que
 no hay problemas de CORS. Para el envío de correos, copia `.env.example` a `.env`
@@ -73,8 +73,8 @@ docker compose down -v && docker compose up --build
 docker compose up -d postgres
 ```
 
-Esto crea la base `tienda_frescos` con las tablas y datos de prueba.
-Credenciales del contenedor: usuario `postgres`, contraseña `postgres`, puerto `5432`.
+Esto crea la base `tienda_frescos` con las tablas y productos de ejemplo. La base
+queda dentro de la red de Docker y no publica el puerto `5432`.
 
 Para reiniciar desde cero (borra los datos):
 
@@ -191,12 +191,8 @@ WEBHOOK_BASE_URL=http://localhost:5000
 
 ## Datos de ejemplo (seed)
 
-Al cargar `backend/database/seed.sql` se crean estos usuarios y 10 productos:
-
-| Rol | Email | Contraseña |
-|-----|-------|-----------|
-| ADMIN | `admin@fruteria.com` | `admin123` |
-| CLIENTE | `cliente@fruteria.com` | `cliente123` |
+Al cargar `backend/database/seed.sql` se crean 10 productos de ejemplo. No se
+crean usuarios con contraseñas conocidas.
 
 ## Crear un administrador
 

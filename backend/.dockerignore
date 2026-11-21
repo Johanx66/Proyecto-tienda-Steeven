@@ -1,3 +1,13 @@
 node_modules
+dist
+coverage
 .env
+.env.*
 npm-debug.log
+*.log
+.git
+.gitignore
+private.key
+*.key
+*.pem
+*.p12

@@ -1,10 +1,4 @@
 -- Datos de ejemplo para desarrollo
--- Usuarios: admin@fruteria.com / admin123 (ADMIN)  |  cliente@fruteria.com / cliente123 (CLIENTE)
-
-INSERT INTO usuarios (nombre, email, telefono, contrasenia, rol, direccion_envio) VALUES
-('Administrador Frutería', 'admin@fruteria.com', '+5215512345678', '$2a$10$GkIrM8l.nDuT7NyTweJuN.n2Aokz.52PQVOTqCvq4badvlpx1PG2W', 'ADMIN', 'Av. Principal 100, CDMX'),
-('Cliente de Prueba', 'cliente@fruteria.com', '+5215598765432', '$2a$10$PowDCqGbbrM/RI/BkTUxyOiUC8UwoIeQiQIodN3WYn.R3k9jkGJBS', 'CLIENTE', 'Calle Secundaria 45, CDMX')
-ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO productos (nombre, descripcion, precio, stock, imagen_url, activo) VALUES
 ('Manzana Roja', 'Manzana roja fresca y crujiente, por kilo.', 35.50, 100, 'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=400', TRUE),
