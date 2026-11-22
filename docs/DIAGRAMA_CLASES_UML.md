@@ -48,6 +48,15 @@ classDiagram
         +updateEstado(id,estado) OrderVerification
     }
 
+    class Notification {
+        -pool
+        +getPreferences(userId) Object
+        +updatePreferences(userId,preferences) Object
+        +create({userId,type,title,message,data}) Notification
+        +listByUser(userId) List~Notification~
+        +markAsRead(id,userId) Notification
+    }
+
     %% ===== Servicios =====
     class OrderService {
         +processOrderWithEmail(order,user) void
@@ -57,6 +66,11 @@ classDiagram
         -buildActionUrl(token,action) string
         -buildEmailHtml(order,user,token) string
         +sendOrderConfirmation(order,user,token) Object
+    }
+
+    class NotificationService {
+        +notifyOrderConfirmed(order,user) void
+        +sendTelegramLinkMessage(chatId,message) void
     }
 
     class MailerConfig {
@@ -87,6 +101,13 @@ classDiagram
     class OrderVerificationController {
         -renderPage({title,message,variant}) string
         +confirm(req,res,next) void
+    }
+
+    class NotificationController {
+        +getSettings(req,res,next) void
+        +updatePreferences(req,res,next) void
+        +createPushSubscription(req,res,next) void
+        +handleTelegramWebhook(req,res,next) void
     }
 
     %% ===== Middlewares =====
@@ -133,6 +154,12 @@ classDiagram
     OrderService ..> EmailService : envía correo
     EmailService ..> MailerConfig : usa transporter
 
+    NotificationController ..> Notification : lee y actualiza
+    NotificationController ..> NotificationService : vincula Telegram
+    NotificationService ..> Notification : guarda avisos
+    NotificationService ..> TelegramBotAPI : envía mensaje
+    NotificationService ..> WebPush : envía push
+
     OrderVerificationController ..> OrderVerification : valida token
     OrderVerificationController ..> Order : actualiza estado
     OrderVerificationController ..> Product : decrementa stock
@@ -145,6 +172,7 @@ classDiagram
     Product ..> DbConfig : usa
     Order ..> DbConfig : usa
     OrderVerification ..> DbConfig : usa
+    Notification ..> DbConfig : usa
     Constants ..> Order : define estados
 ```
 
@@ -201,10 +229,30 @@ classDiagram
         +timestamp fecha_creacion
     }
 
+    class Notificacion {
+        +int id
+        +int usuario_id
+        +string tipo
+        +string titulo
+        +string mensaje
+        +json datos
+        +timestamp leida_en
+        +timestamp fecha_creacion
+    }
+
+    class PreferenciasNotificacion {
+        +int usuario_id
+        +boolean telegram_habilitado
+        +string telegram_chat_id
+        +boolean push_habilitado
+    }
+
     Usuario "1" --> "0..*" Pedido : realiza
     Pedido "1" --> "1..*" DetallePedido : contiene
     Producto "1" --> "0..*" DetallePedido : referenciado
     Pedido "1" --> "0..*" VerificacionPedido : genera
+    Usuario "1" --> "0..*" Notificacion : recibe
+    Usuario "1" --> "0..1" PreferenciasNotificacion : configura
 ```
 
 ---
@@ -227,8 +275,8 @@ flowchart TB
         ROUTES[Routes]
         MW[Middlewares: auth, adminOnly, validation, errorHandler]
         CTRL[Controllers]
-        SVC[Services: orderService, emailService]
-        MODELS[Models: User, Product, Order, OrderVerification]
+        SVC[Services: orderService, emailService, notificationService]
+        MODELS[Models: User, Product, Order, OrderVerification, Notification]
         CONFIG[Config: db, jwt, mailer]
         ROUTES --> MW --> CTRL --> SVC
         CTRL --> MODELS
@@ -238,11 +286,15 @@ flowchart TB
     subgraph Externos["Servicios externos"]
         PG[(PostgreSQL)]
         SMTP[SMTP / Nodemailer]
+        TELEGRAM[Telegram Bot API]
+        PUSH[Web Push / VAPID]
     end
 
     API -->|REST /api| ROUTES
     MODELS --> PG
     SVC --> SMTP
+    SVC --> TELEGRAM
+    SVC --> PUSH
 ```
 
 ---

@@ -4,8 +4,8 @@
 **Metodología:** Análisis cualitativo (Probabilidad × Impacto)
 **Última revisión:** 2026
 
-Este documento identifica los riesgos críticos del sistema y las estrategias de mitigación
-aplicadas. Listo para copiar a la **Wiki de GitHub**.
+Este documento identifica los riesgos del sistema, las medidas aplicadas y los
+riesgos residuales. Se mantiene junto a la página de la **Wiki de GitHub**.
 
 ---
 
@@ -29,13 +29,13 @@ aplicadas. Listo para copiar a la **Wiki de GitHub**.
 | R-06 | **Condiciones de carrera en el stock** (sobreventa de productos)                | Técnico   | Media        | Alto    | Alto  | Transacciones (`BEGIN`/`COMMIT`/`ROLLBACK`) + bloqueo `SELECT … FOR UPDATE` al crear el pedido; stock decrementado con verificación `stock >= cantidad`.   |
 | R-07 | **Enlaces de confirmación expirados o no usados**                               | Técnico   | Alta         | Medio   | Medio | TTL configurable (`VERIFICATION_TOKEN_TTL_MINUTES=30`); estado `EXPIRADO` y página informativa; pedido permanece `PENDIENTE_VERIFICACION`/`NO_CONFIRMADO`. |
 | R-08 | **Datos de entrada maliciosos / malformados** en la API                         | Seguridad | Media        | Medio   | Medio | Validación con **express-validator** (`registerRules`, `loginRules`, `productRules`, `orderRules`); validación de formularios en frontend con **Zod**.     |
-| R-09 | **Dependencias desactualizadas o vulnerables**                                  | Técnico   | Media        | Medio   | Medio | `npm audit` = 0 vulnerabilidades; CI ejecuta `npm ci`; checklist de actualización periódica (ver sección 3).                                               |
+| R-09 | **Dependencias desactualizadas o vulnerables**                                  | Técnico   | Media        | Medio   | Medio | Versiones fijadas en lockfiles y CI usa `npm ci`; todavía falta ejecutar `npm audit` de forma periódica o en CI (ver sección 3).                            |
 | R-10 | **Errores no controlados** que filtren stack traces al cliente                  | Técnico   | Media        | Medio   | Medio | Middleware `errorHandler` centralizado; los controladores delegan con `next(err)` y responden JSON genérico.                                               |
 | R-11 | **CORS mal configurado** / exposición de la API                                 | Seguridad | Baja         | Medio   | Bajo  | `cors` explícito; en producción el frontend (Nginx) hace _proxy_ de `/api`, evitando CORS abierto.                                                         |
 | R-12 | **Pérdida de la base de datos**                                                 | Técnico   | Baja         | Crítico | Medio | Volumen persistente de Docker (`postgres_data`); esquema versionado en `schema.sql` + `seed.sql`; (recomendado) respaldos periódicos `pg_dump`.            |
 | R-13 | **Fallo de envío de correo** (SMTP caído o credenciales inválidas)              | Técnico   | Media        | Medio   | Medio | Modo `MAIL_MOCK=true` para desarrollo; el fallo se captura y el pedido queda en `PENDIENTE_VERIFICACION` sin romper el flujo de compra.                    |
-| R-14 | **Regresión de código sin pruebas automatizadas**                               | Técnico   | Alta         | Alto    | Alto  | CI con **ESLint + Prettier + build** en cada push/PR; (recomendado) añadir pruebas unitarias/E2E (ver sección 4).                                          |
-| R-15 | **Inconsistencia de rutas** de la API (`/api/orders/confirm` vs `/api/pedidos`) | Técnico   | Media        | Bajo    | Bajo  | Riesgo identificado — pendiente de unificar prefijos para mantener coherencia (registrado como issue).                                                     |
+| R-14 | **Regresión de código sin pruebas automatizadas**                               | Técnico   | Alta         | Alto    | Alto  | CI con **ESLint + Prettier + build** en cada push/PR y smoke checks manuales documentados; aún faltan pruebas automáticas de flujos de negocio.             |
+| R-15 | **Ruta de confirmación distinta** (`/api/orders/confirm` frente a `/api/pedidos`) | Técnico   | Baja         | Bajo    | Bajo  | La ruta de callback de correo es una excepción intencional y está documentada; el resto de pedidos usa `/api/pedidos`. Revisar antes de retirar enlaces enviados. |
 | R-16 | **Almacenamiento de token en `localStorage`** (vulnerable a XSS)                | Seguridad | Baja         | Medio   | Bajo  | Uso de `localStorage` con limpieza en 401; (recomendado) migrar a cookies `httpOnly` + `SameSite` si se endurece el modelo de amenaza.                     |
 
 ---
@@ -62,18 +62,18 @@ aplicadas. Listo para copiar a la **Wiki de GitHub**.
 
 ## 4. Trabajo futuro recomendado
 
-1. **Pruebas automatizadas** (R-14): unitarias (Jest/Vitest) y E2E (Playwright) para flujo de confirmación.
+1. **Pruebas automatizadas** (R-14): unitarias y E2E para registro, pedidos y confirmación; hoy se ejecutan smoke checks manuales.
 2. **Dependabot / `npm audit` en CI** (R-09).
 3. **Rate limiting** en endpoints de autenticación (mitiga fuerza bruta, R-03).
-4. **Unificar prefijo de rutas de API** (R-15).
+4. **Retirar la ruta histórica de confirmación** (R-15) solo después de migrar los enlaces de correo vigentes.
 5. **Respaldos automáticos de la base de datos** (R-12).
 6. **Migrar token a cookies httpOnly** (R-16), si se endurece el modelo de amenaza.
 
 ---
 
-## 5. Cómo copiar a la Wiki de GitHub
+## 5. Publicación y mantenimiento de la Wiki
 
-1. GitHub → repositorio → pestaña **Wiki** → _Create the first page_ (o _New Page_).
-2. Crea una página llamada **`Matriz de Riesgos`**.
-3. Copia el contenido de este archivo (sección 1 en adelante).
-4. Guarda. La tabla Markdown se renderiza automáticamente.
+La Wiki del proyecto ya está creada: <https://github.com/Johanx66/Proyecto-tienda-Steeven/wiki>.
+Al editar esta matriz o los diagramas locales, actualizar también sus páginas
+correspondientes en la Wiki para mantener ambos lugares sincronizados. La tabla y
+los diagramas Mermaid se muestran como Markdown.

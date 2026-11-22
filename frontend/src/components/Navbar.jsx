@@ -76,6 +76,14 @@ export default function Navbar() {
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end">
                   <li>
+                    <Link className="dropdown-item" to="/perfil/notificaciones">
+                      Perfil y notificaciones
+                    </Link>
+                  </li>
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
+                  <li>
                     <button className="dropdown-item" onClick={handleLogout}>
                       Cerrar sesión
                     </button>

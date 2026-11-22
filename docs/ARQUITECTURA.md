@@ -32,10 +32,17 @@ Arquitectura **cliente-servidor en capas** (Layered Architecture):
 │  Routes → Middlewares → Controllers → Services → Models   │
 └───────────────────────────┬──────────────────────────────┘
               ┌─────────────┴─────────────┐
-              ▼                           ▼
       ┌──────────────┐            ┌────────────────┐
       │  PostgreSQL  │            │  SMTP (correo) │
       └──────────────┘            └────────────────┘
+              │                           │
+              │                     Confirmación antifraude
+              ▼
+      ┌──────────────────────┐       ┌──────────────────┐
+      │ Bandeja y preferencias│──────▶│ Telegram Bot API │
+      └──────────────────────┘       └──────────────────┘
+                 │
+                 └───────────────────▶ Web Push (VAPID)
 ```
 
 ---
@@ -49,8 +56,8 @@ Arquitectura **cliente-servidor en capas** (Layered Architecture):
 | `routes/`      | Definición de endpoints y encadenado de middlewares.                               |
 | `middleware/`  | `auth` (JWT), `adminOnly` (rol), `validation` (express-validator), `errorHandler`. |
 | `controllers/` | Orquestación de peticiones y respuestas HTTP.                                      |
-| `services/`    | Lógica de negocio: `orderService`, `emailService`.                                 |
-| `models/`      | Acceso a datos con SQL parametrizado (User, Product, Order, OrderVerification).    |
+| `services/`    | Lógica de negocio: pedidos, correo y notificaciones (Telegram/Web Push).           |
+| `models/`      | Acceso SQL parametrizado a usuarios, pedidos, productos y notificaciones.          |
 | `config/`      | Conexiones y secretos: `db`, `jwt`, `mailer`.                                      |
 | `utils/`       | Constantes de estados y helpers.                                                   |
 
@@ -73,7 +80,7 @@ Arquitectura **cliente-servidor en capas** (Layered Architecture):
 | -------- | ---------------------------------------------------------------- |
 | Backend  | Node.js, Express, PostgreSQL (`pg`), `express-validator`         |
 | Auth     | JWT (`jsonwebtoken`) + `bcryptjs`                                |
-| Correo   | Nodemailer (SMTP) con modo mock                                  |
+| Mensajes | Nodemailer (SMTP), Telegram Bot API y Web Push (`web-push`/VAPID) |
 | Frontend | Vite, React 18, Bootstrap 5, React Router, React Hook Form + Zod |
 | Estado   | Context API                                                      |
 | Infra    | Docker, Docker Compose, Nginx                                    |
@@ -83,8 +90,10 @@ Arquitectura **cliente-servidor en capas** (Layered Architecture):
 
 ## 5. Modelo de datos
 
-Cinco tablas: `usuarios`, `productos`, `pedidos`, `detalle_pedidos`, `verificaciones_pedido`.
-Ver el diagrama de entidades en [`DIAGRAMA_CLASES_UML.md`](DIAGRAMA_CLASES_UML.md) (sección 2).
+Tablas principales: `usuarios`, `productos`, `pedidos`, `detalle_pedidos` y
+`verificaciones_pedido`. Las migraciones agregan preferencias de notificación,
+suscripciones push, vínculos Telegram y la bandeja interna. Ver el diagrama de
+entidades en [`DIAGRAMA_CLASES_UML.md`](DIAGRAMA_CLASES_UML.md) (sección 2).
 
 ---
 
@@ -110,6 +119,8 @@ Cliente            Backend                         PostgreSQL      Correo
 
 Estados del pedido: `PENDIENTE_VERIFICACION → CONFIRMADO → DESPACHADO`,
 con salidas a `CANCELADO_FRAUDE` (reporte) o `NO_CONFIRMADO` (token sin usar).
+Tras aprobar por correo, se conserva una notificación en la bandeja del perfil y
+se entrega por Telegram o Web Push únicamente si el cliente los habilitó.
 
 ---
 
@@ -118,11 +129,12 @@ con salidas a `CANCELADO_FRAUDE` (reporte) o `NO_CONFIRMADO` (token sin usar).
 | #   | Decisión                                                      | Justificación                                                 |
 | --- | ------------------------------------------------------------- | ------------------------------------------------------------- |
 | 1   | **SQL parametrizado** en lugar de ORM                         | Simplicidad y control; previene inyección SQL.                |
-| 2   | **Confirmación por correo** en vez de llamada telefónica      | Menor costo (sin Twilio), mayor accesibilidad y trazabilidad. |
+| 2   | **Confirmación antifraude por correo**; canales de aviso opcionales | Conserva el enlace auditable y agrega canales voluntarios de bajo costo. |
 | 3   | **Token aleatorio** (`crypto.randomBytes(32)`) con expiración | Suficientemente impredecible; TTL configurable evita reuso.   |
 | 4   | **Transacciones** con `FOR UPDATE` al crear/confirmar pedidos | Garantiza consistencia de stock en concurrencia.              |
 | 5   | **Context API** en lugar de Redux                             | Estado global acotado (auth + carrito); menor boilerplate.    |
 | 6   | **Modo `MAIL_MOCK`**                                          | Permite desarrollo y pruebas sin credenciales SMTP.           |
+| 7   | **Avisos Telegram/Web Push separados del correo**             | Los fallos de canales opcionales no revierten la aprobación. |
 
 ---
 

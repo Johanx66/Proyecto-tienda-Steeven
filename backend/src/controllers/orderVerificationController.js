@@ -2,7 +2,9 @@ const pool = require('../config/db');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const OrderVerification = require('../models/OrderVerification');
+const User = require('../models/User');
 const { ORDER_STATES, VERIFICATION_STATES } = require('../utils/constants');
+const { notifyOrderConfirmed } = require('../services/notificationService');
 
 function renderPage({ title, message, variant }) {
   const color = variant === 'success' ? '#198754' : variant === 'danger' ? '#dc3545' : '#6c757d';
@@ -118,6 +120,11 @@ async function confirm(req, res, next) {
       }
       await OrderVerification.updateEstado(verification.id, VERIFICATION_STATES.APROBADO);
       console.log(`Pedido ${pedido.id}: confirmado por correo.`);
+      User.findById(pedido.usuario_id)
+        .then((user) => user && notifyOrderConfirmed(pedido, user))
+        .catch((err) =>
+          console.error(`Error notificando la confirmación del pedido ${pedido.id}:`, err.message)
+        );
       return res.send(
         renderPage({
           title: '¡Pedido confirmado!',

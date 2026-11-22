@@ -4,6 +4,17 @@ Plataforma e-commerce monomarca para venta de productos frescos (frutas y verdur
 que confirma cada pedido mediante un enlace enviado por **correo electrónico**. El
 cliente autoriza su compra o reporta fraude con un clic desde el email.
 
+## Enlaces de entrega
+
+- **Aplicación desplegada:** https://proyectosteeven.dpdns.org
+- **Repositorio:** https://github.com/Johanx66/Proyecto-tienda-Steeven
+- **Wiki del proyecto:** https://github.com/Johanx66/Proyecto-tienda-Steeven/wiki
+
+La guía para instalar y ejecutar el proyecto desde cero está en esta página. La
+arquitectura, los diagramas, el despliegue y la matriz de riesgos están en
+[`docs/`](docs); la guía y resultados de las pruebas manuales están en
+[`docs/PRUEBAS_MANUALES.md`](docs/PRUEBAS_MANUALES.md).
+
 ## Tecnologías
 
 | Capa | Tecnología |
@@ -182,6 +193,11 @@ WEBHOOK_BASE_URL=http://localhost:5000
 | GET | `/api/pedidos/admin` | Admin | Todos los pedidos |
 | PUT | `/api/pedidos/:id/despachar` | Admin | Marcar como despachado |
 | GET | `/api/orders/confirm` | — | Enlace del correo: `?token=...&action=approve\|reject` |
+| GET | `/api/notificaciones` | Cliente | Preferencias y últimas notificaciones |
+| PUT | `/api/notificaciones/preferences` | Cliente | Activar/desactivar Telegram y push web |
+| POST/DELETE | `/api/notificaciones/telegram/link` | Cliente | Vincular/desvincular Telegram |
+| POST/DELETE | `/api/notificaciones/push/subscription` | Cliente | Activar/desactivar push web |
+| PUT | `/api/notificaciones/:id/read` | Cliente | Marcar como leída una notificación propia |
 
 ## Flujo de Confirmación por Correo
 
@@ -191,6 +207,36 @@ WEBHOOK_BASE_URL=http://localhost:5000
    El enlace **No reconozco esta compra** → pedido `CANCELADO_FRAUDE` y alerta de seguridad.
 4. Si el enlace expira sin usarse → el pedido queda en `PENDIENTE_VERIFICACION`
    (puede marcarse como `NO_CONFIRMADO`).
+
+## Avisos de pedido (Telegram y push web)
+
+La confirmación antifraude por correo se conserva. Después de que el cliente
+aprueba el enlace y el pedido pasa a `CONFIRMADO`, el sistema guarda un aviso en
+la bandeja del perfil y lo envía por Telegram y/o push web si el cliente activó
+esos canales. Los avisos externos son opcionales; un fallo de Telegram o push no
+deshace la confirmación del pedido.
+
+Para activar Telegram, crea un bot con `@BotFather`, configura
+`TELEGRAM_BOT_TOKEN` y `TELEGRAM_BOT_USERNAME` y registra el webhook de Telegram
+con `WEBHOOK_BASE_URL=https://TU_DOMINIO` y un valor aleatorio para
+`TELEGRAM_WEBHOOK_SECRET`. Después de desplegar el backend con HTTPS, registra el
+webhook en Telegram con:
+
+```bash
+docker compose exec backend npm run telegram:webhook
+```
+
+El cliente genera un enlace de vinculación desde **Perfil y notificaciones** y
+debe iniciar el bot.
+
+Para push web, genera claves VAPID dentro del backend con
+`npx web-push generate-vapid-keys` y configura `VAPID_PUBLIC_KEY`,
+`VAPID_PRIVATE_KEY` y `VAPID_SUBJECT`. El navegador solicita permiso cuando el
+usuario activa push desde su perfil. En producción se requiere HTTPS; los avisos
+push dependen del soporte del navegador y de sus permisos.
+
+Las tablas nuevas se aplican automáticamente al arrancar el backend mediante las
+migraciones de `backend/database/migrations/`.
 
 ## Datos de ejemplo (seed)
 
@@ -214,3 +260,4 @@ UPDATE usuarios SET rol = 'ADMIN' WHERE email = 'tu@email.com';
   - [Guía de desarrollo](https://github.com/Johanx66/Proyecto-tienda-Steeven/wiki/Guia-de-desarrollo)
 - **Tablero de tareas (GitHub Projects):** https://github.com/users/Johanx66/projects/4
 - **Documentos locales:** [`docs/`](docs) — arquitectura, UML y matriz de riesgos.
+- **Pruebas manuales:** [`docs/PRUEBAS_MANUALES.md`](docs/PRUEBAS_MANUALES.md) — casos de aceptación y verificaciones ejecutadas.

@@ -169,8 +169,9 @@ de IAM ni la guardes en GitHub.
 
 Revisa y confirma los cambios de despliegue en tu equipo, luego súbelos a la rama
 `main`. En **Actions**, el workflow `CI` ejecutará las verificaciones; solo si
-ambas pasan, enviará la versión de ese commit a EC2. La página quedará disponible
-en `http://IP_PUBLICA_EC2`.
+ambas pasan, enviará la versión de ese commit a EC2. La página publicada para este
+proyecto está en <https://proyectosteeven.dpdns.org>. Si se usa otra instancia o
+dominio, sustituye ese enlace por la URL que apunte a ella.
 
 La primera ejecución inicializa PostgreSQL y carga productos de ejemplo. Para
 administrar la tienda, registra tu cuenta desde la página y asígnale el rol
