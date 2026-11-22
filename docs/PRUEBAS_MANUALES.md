@@ -1,7 +1,7 @@
 # Pruebas manuales y verificaciones de entrega
 
 **Proyecto:** Tienda Web de Productos Frescos
-**Última verificación:** 21 de noviembre de 2026
+**Última verificación:** 22 de noviembre de 2026
 **Aplicación:** <https://proyectosteeven.dpdns.org>
 
 ## Verificaciones ejecutadas
@@ -12,6 +12,8 @@
 | Salud de la API | Aprobada | `GET /api/health` devolvió HTTP 200 y `{"status":"ok"}`. |
 | Catálogo público | Aprobada | `GET /api/productos` devolvió HTTP 200 con contenido. |
 | Rechazo de credenciales inválidas | Aprobada | `POST /api/auth/login` con un correo inexistente y contraseña inválida devolvió HTTP 401. No se creó ni modificó una cuenta. |
+| Ruta protegida de notificaciones | Aprobada | `GET /api/notificaciones` sin token devolvió HTTP 401. |
+| Archivos de PWA | Aprobada | `GET /manifest.webmanifest`, `GET /sw.js` y `GET /hoja.svg` devolvieron HTTP 200. |
 | ESLint backend y frontend | Aprobada | `npm run lint --prefix backend` y `npm run lint --prefix frontend`. |
 | Prettier backend y frontend | Aprobada | `npm run format:check --prefix backend` y `npm run format:check --prefix frontend`. |
 | Build de producción frontend | Aprobada | `npm run build --prefix frontend`; Vite generó `frontend/dist`. |
