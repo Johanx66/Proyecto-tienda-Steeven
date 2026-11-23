@@ -2,9 +2,9 @@ const crypto = require('crypto');
 const pool = require('../config/db');
 
 const OrderVerification = {
-  async create({ pedido_id, ttlMinutes = 30 }) {
+  async create({ pedido_id, ttlMinutes = 30, client = pool }) {
     const token = crypto.randomBytes(32).toString('hex');
-    const { rows } = await pool.query(
+    const { rows } = await client.query(
       `INSERT INTO verificaciones_pedido (pedido_id, token, estado, expira_en)
        VALUES ($1, $2, 'PENDIENTE', NOW() + ($3 || ' minutes')::interval)
        RETURNING *`,

@@ -110,14 +110,15 @@ Cliente            Backend                         PostgreSQL      Correo
    │  POST /api/pedidos  │                              │            │
    ├────────────────────>│  BEGIN; crear pedido         │            │
    │                     ├─────────────────────────────>│            │
-   │                     │  COMMIT (PENDIENTE_VERIFICACION)          │
+   │                     │  valida y descuenta stock; COMMIT         │
+   │                     │  (PENDIENTE_VERIFICACION)                  │
    │                     ├───────────────────────────────────────────>
    │                     │  generar token + enviar correo            │
    │  (< 201 Created)    │<──                                     (envío)
    │<────────────────────┤
    │  abre enlace del correo: GET /api/orders/confirm?token=..&action=approve
    ├────────────────────>│  valida token / expiración   │            │
-   │                     │  aprueba → CONFIRMADO + descuenta stock   │
+   │                     │  aprueba → CONFIRMADO (sin doble descuento)│
    │                     ├─────────────────────────────>│            │
    │  página HTML OK     │                              │            │
    │<────────────────────┤
@@ -125,6 +126,8 @@ Cliente            Backend                         PostgreSQL      Correo
 
 Estados del pedido: `PENDIENTE_VERIFICACION → CONFIRMADO → DESPACHADO`,
 con salidas a `CANCELADO_FRAUDE` (reporte) o `NO_CONFIRMADO` (token sin usar).
+El stock se descuenta al crear el pedido. Rechazarlo o dejar vencer el enlace
+devuelve la reserva; la aprobación solo cambia el estado y nunca descuenta dos veces.
 Tras aprobar por correo, se conserva una notificación en la bandeja del perfil y
 se entrega por Telegram o Web Push únicamente si el cliente los habilitó.
 

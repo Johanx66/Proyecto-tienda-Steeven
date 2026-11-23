@@ -229,12 +229,19 @@ WEBHOOK_BASE_URL=http://localhost:5000
 
 ## Flujo de Confirmación por Correo
 
-1. El cliente crea un pedido → estado `PENDIENTE_VERIFICACION`.
+1. Al enviar el pedido desde el checkout, el backend valida y descuenta el stock
+   en la misma transacción que crea el pedido `PENDIENTE_VERIFICACION`.
 2. El backend genera un token y envía un correo al cliente con dos enlaces.
-3. El enlace **Autorizar** → pedido `CONFIRMADO` y se descuenta el stock.
-   El enlace **No reconozco esta compra** → pedido `CANCELADO_FRAUDE` y alerta de seguridad.
-4. Si el enlace expira sin usarse → el pedido queda en `PENDIENTE_VERIFICACION`
-   (puede marcarse como `NO_CONFIRMADO`).
+3. El enlace **Autorizar** → pedido `CONFIRMADO`; no se vuelve a descontar el stock.
+   El enlace **No reconozco esta compra** → pedido `CANCELADO_FRAUDE` y se devuelve
+   el stock reservado.
+4. Si el enlace vence sin usarse, el backend marca el pedido `NO_CONFIRMADO` y
+   devuelve automáticamente el stock.
+
+En el catálogo, la cantidad disponible también resta los productos que ya están
+en el carrito actual. Esa vista previa no reserva inventario globalmente; la
+reserva efectiva ocurre al enviar el pedido. Si otro comprador consume ese stock
+antes, el checkout vuelve a validar la existencia y muestra el faltante.
 
 ## Avisos de pedido (Telegram y push web)
 

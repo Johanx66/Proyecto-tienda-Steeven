@@ -2,10 +2,12 @@ const OrderVerification = require('../models/OrderVerification');
 const emailService = require('./emailService');
 const { VERIFICATION_STATES } = require('../utils/constants');
 
-async function processOrderWithEmail(order, user) {
+async function createOrderVerification(client, orderId) {
   const ttlMinutes = Number(process.env.VERIFICATION_TOKEN_TTL_MINUTES) || 30;
-  const verification = await OrderVerification.create({ pedido_id: order.id, ttlMinutes });
+  return OrderVerification.create({ pedido_id: orderId, ttlMinutes, client });
+}
 
+async function processOrderWithEmail(order, user, verification) {
   try {
     await emailService.sendOrderConfirmation(order, user, verification.token);
     console.log(`Pedido ${order.id}: correo de confirmación enviado a ${user.email}`);
@@ -16,4 +18,4 @@ async function processOrderWithEmail(order, user) {
   }
 }
 
-module.exports = { processOrderWithEmail };
+module.exports = { createOrderVerification, processOrderWithEmail };

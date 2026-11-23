@@ -3,8 +3,8 @@ const pool = require('../config/db');
 const Order = {
   async createWithDetails(client, { usuario_id, monto_total, items }) {
     const orderResult = await client.query(
-      `INSERT INTO pedidos (usuario_id, monto_total, estado)
-       VALUES ($1, $2, 'PENDIENTE_VERIFICACION')
+      `INSERT INTO pedidos (usuario_id, monto_total, estado, stock_descontado)
+       VALUES ($1, $2, 'PENDIENTE_VERIFICACION', TRUE)
        RETURNING *`,
       [usuario_id, monto_total]
     );

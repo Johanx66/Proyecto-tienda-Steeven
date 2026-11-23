@@ -2,8 +2,11 @@ import { Card, Button, Badge } from 'react-bootstrap';
 import useCart from '../hooks/useCart';
 
 export default function ProductCard({ product }) {
-  const { addItem } = useCart();
-  const sinStock = product.stock <= 0;
+  const { items, addItem } = useCart();
+  const cantidadEnCarrito =
+    items.find((item) => item.producto_id === product.id)?.cantidad || 0;
+  const stockDisponible = Math.max(0, product.stock - cantidadEnCarrito);
+  const sinStock = stockDisponible <= 0;
 
   return (
     <Card className="h-100 shadow-sm">
@@ -21,7 +24,7 @@ export default function ProductCard({ product }) {
         <div className="d-flex justify-content-between align-items-center mb-2">
           <span className="fw-bold text-success">${parseFloat(product.precio).toFixed(2)}</span>
           <Badge bg={sinStock ? 'danger' : 'success'}>
-            {sinStock ? 'Agotado' : `Stock: ${product.stock}`}
+            {sinStock ? 'Agotado' : `Stock: ${stockDisponible}`}
           </Badge>
         </div>
         <Button variant="success" size="sm" disabled={sinStock} onClick={() => addItem(product)}>

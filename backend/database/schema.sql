@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS pedidos (
     usuario_id INT REFERENCES usuarios(id),
     monto_total DECIMAL(10, 2) NOT NULL,
     estado VARCHAR(30) DEFAULT 'PENDIENTE_VERIFICACION',
+    stock_descontado BOOLEAN NOT NULL DEFAULT FALSE,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

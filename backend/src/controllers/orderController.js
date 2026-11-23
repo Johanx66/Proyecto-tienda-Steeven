@@ -1,6 +1,6 @@
 const pool = require('../config/db');
 const Order = require('../models/Order');
-const { processOrderWithEmail } = require('../services/orderService');
+const { createOrderVerification, processOrderWithEmail } = require('../services/orderService');
 const { ORDER_STATES } = require('../utils/constants');
 
 async function create(req, res, next) {
@@ -30,6 +30,17 @@ async function create(req, res, next) {
           error: `Stock insuficiente para ${product.nombre}. Disponible: ${product.stock}`,
         });
       }
+      const reservation = await client.query(
+        `UPDATE productos SET stock = stock - $2
+         WHERE id = $1 AND stock >= $2 RETURNING id`,
+        [product.id, item.cantidad]
+      );
+      if (reservation.rowCount !== 1) {
+        await client.query('ROLLBACK');
+        return res.status(400).json({
+          error: `Stock insuficiente para ${product.nombre}. Actualiza el carrito e inténtalo de nuevo.`,
+        });
+      }
       const subtotal = parseFloat(product.precio) * item.cantidad;
       montoTotal += subtotal;
       processedItems.push({
@@ -45,6 +56,7 @@ async function create(req, res, next) {
       monto_total: montoTotal,
       items: processedItems,
     });
+    const verification = await createOrderVerification(client, order.id);
 
     await client.query('UPDATE usuarios SET direccion_envio = $2 WHERE id = $1', [
       usuarioId,
@@ -53,7 +65,7 @@ async function create(req, res, next) {
 
     await client.query('COMMIT');
 
-    processOrderWithEmail(order, req.user).catch((err) =>
+    processOrderWithEmail(order, req.user, verification).catch((err) =>
       console.error(`Error al procesar verificación del pedido ${order.id}:`, err.message)
     );
 
