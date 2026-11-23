@@ -91,8 +91,8 @@ Omítelo en producción.
 El usuario inicial predeterminado es `admin@tiendafrescos.local`. Si no
 configuraste una clave, el comando la genera una sola vez y la muestra en la
 consola: guárdala en un gestor de contraseñas. La contraseña se guarda con bcrypt.
-El formulario de acceso muestra pestañas separadas para **Cliente** y
-**Administrador / vendedor**; el acceso del vendedor también tiene la ruta
+El formulario de acceso muestra pestañas separadas para **Cliente** y **Vendedor**;
+el acceso del vendedor también tiene la ruta
 directa `http://localhost/admin/login`. No se crea una cuenta administradora con
 una contraseña pública o compartida.
 Las cuentas administradoras deben usar ese acceso; el login de cliente no admite
@@ -283,7 +283,7 @@ docker compose exec -T postgres psql -U postgres -d tienda_frescos -f /seed_demo
 | Rol | Usuario | Contraseña | Acceso |
 |-----|---------|------------|--------|
 | Cliente (solo desarrollo local) | `cliente@demo.local` | `ClienteDemo2026!` | `/login` |
-| Administrador/vendedor | `admin@tiendafrescos.local` | Generada una vez por `npm run admin:create`, o la clave privada definida en `ADMIN_PASSWORD` | `/admin/login` |
+| Vendedor | `admin@tiendafrescos.local` | Generada una vez por `npm run admin:create`, o la clave privada definida en `ADMIN_PASSWORD` | `/admin/login` |
 
 La cuenta de cliente es solo para desarrollo local y no tiene permisos
 administrativos. No reutilices esa contraseña en producción. Para

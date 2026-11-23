@@ -51,13 +51,13 @@ export default function Login({ adminOnly = false }) {
               </Nav.Item>
               <Nav.Item>
                 <Nav.Link as={Link} to="/admin/login" eventKey="admin">
-                  Administrador / vendedor
+                  Vendedor
                 </Nav.Link>
               </Nav.Item>
             </Nav>
             <p className="text-muted text-center mb-4">
               {adminOnly
-                ? 'Ingresa con una cuenta autorizada para administrar la tienda.'
+                ? 'Ingresa con la cuenta autorizada del vendedor.'
                 : 'Ingresa con tu cuenta de cliente para comprar.'}
             </p>
             <Alert message={error} onClose={() => setError(null)} />
