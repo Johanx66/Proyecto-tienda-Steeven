@@ -61,6 +61,12 @@ Arquitectura **cliente-servidor en capas** (Layered Architecture):
 | `config/`      | Conexiones y secretos: `db`, `jwt`, `mailer`.                                      |
 | `utils/`       | Constantes de estados y helpers.                                                   |
 
+El cliente y el administrador usan pantallas de acceso separadas. El servidor
+solo permite que cuentas con rol `ADMIN` inicien sesión desde `/api/auth/admin/login`;
+el panel y las rutas de creación/edición de productos vuelven a validar el rol.
+La cuenta inicial se crea explícitamente con `npm run admin:create` y una clave
+aleatoria o configurada por el responsable.
+
 ### 3.2 Frontend (`frontend/src/`)
 
 | Carpeta       | Responsabilidad                                                                 |

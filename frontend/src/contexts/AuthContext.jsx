@@ -19,12 +19,21 @@ export function AuthProvider({ children }) {
     }
   }, [token]);
 
-  const login = async (email, contrasenia) => {
-    const { data } = await api.post('/auth/login', { email, contrasenia });
+  const saveSession = (data) => {
     setUser(data.user);
     setToken(data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     return data.user;
+  };
+
+  const login = async (email, contrasenia) => {
+    const { data } = await api.post('/auth/login', { email, contrasenia });
+    return saveSession(data);
+  };
+
+  const loginAdmin = async (email, contrasenia) => {
+    const { data } = await api.post('/auth/admin/login', { email, contrasenia });
+    return saveSession(data);
   };
 
   const register = async (payload) => {
@@ -49,6 +58,7 @@ export function AuthProvider({ children }) {
     isAuthenticated: !!token,
     isAdmin: user?.rol === 'ADMIN',
     login,
+    loginAdmin,
     register,
     logout,
   };

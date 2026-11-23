@@ -9,13 +9,13 @@ export default function AdminPanel() {
   return (
     <Card className="shadow-sm">
       <Card.Body>
-        <h4 className="mb-4">Panel de Administración</h4>
+        <h4 className="mb-4">Panel del administrador / vendedor</h4>
         <Nav variant="tabs" activeKey={tab} onSelect={(k) => setTab(k)} className="mb-4">
           <Nav.Item>
             <Nav.Link eventKey="pedidos">Pedidos</Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link eventKey="productos">Inventario</Nav.Link>
+            <Nav.Link eventKey="productos">Productos de la tienda</Nav.Link>
           </Nav.Item>
         </Nav>
 

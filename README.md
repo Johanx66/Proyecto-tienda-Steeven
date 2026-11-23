@@ -56,8 +56,12 @@ Levanta PostgreSQL (con esquema + datos de ejemplo), el backend y el frontend
 construido y servido con Nginx, todo con un solo comando:
 
 ```bash
+cp .env.example .env
 docker compose up --build
 ```
+
+En PowerShell puedes copiar el archivo con `Copy-Item .env.example .env`. Para
+producción, reemplaza los secretos de ejemplo antes de iniciar los servicios.
 
 | Servicio | URL |
 |----------|-----|
@@ -68,8 +72,26 @@ docker compose up --build
 El frontend servido por Nginx hace *proxy* de `/api` hacia el backend, por lo que
 no hay problemas de CORS. En el despliegue de producción, Caddy se activa con el
 perfil `production`, termina HTTPS y redirige `www` al dominio principal. Para el
-envío de correos, copia `.env.example` a `.env` en la raíz y rellena las
-credenciales SMTP (o deja `MAIL_MOCK=true`).
+envío real de correos, rellena las credenciales SMTP en `.env` (o deja
+`MAIL_MOCK=true` en desarrollo).
+
+Para crear el acceso del administrador/vendedor, puedes definir `ADMIN_PASSWORD`
+en `.env` para elegir una clave;
+si lo dejas vacío, el programa generará una clave aleatoria en la primera
+ejecución. En una segunda terminal, ejecuta:
+
+```bash
+docker compose exec backend npm run admin:create
+```
+
+El usuario inicial predeterminado es `admin@tiendafrescos.local`. Si no
+configuraste una clave, el comando la genera una sola vez y la muestra en la
+consola: guárdala en un gestor de contraseñas. La contraseña se guarda con bcrypt.
+El acceso del vendedor está en `http://localhost/admin/login`. No se crea una
+cuenta administradora con una contraseña pública o compartida.
+Las cuentas administradoras deben usar ese acceso; el login de cliente no admite
+cuentas con rol `ADMIN`. El servidor vuelve a comprobar el rol en las rutas de
+administración y productos.
 
 Para reiniciar desde cero (borra los datos de la base):
 
@@ -240,16 +262,34 @@ migraciones de `backend/database/migrations/`.
 
 ## Datos de ejemplo (seed)
 
-Al cargar `backend/database/seed.sql` se crean 10 productos de ejemplo. No se
-crean usuarios con contraseñas conocidas.
+Al cargar `backend/database/seed.sql` se crean 10 productos de ejemplo y una
+cuenta de cliente de demostración para desarrollo local.
 
-## Crear un administrador
+## Accesos de prueba locales
 
-Regístrate normalmente y luego actualiza el rol en la base de datos:
+Al ejecutar la carga inicial de productos se crea también esta cuenta de cliente
+para probar el flujo de compra:
 
-```sql
-UPDATE usuarios SET rol = 'ADMIN' WHERE email = 'tu@email.com';
+| Rol | Usuario | Contraseña | Acceso |
+|-----|---------|------------|--------|
+| Cliente (solo desarrollo local) | `cliente@demo.local` | `ClienteDemo2026!` | `/login` |
+| Administrador/vendedor | `admin@tiendafrescos.local` | Generada una vez por `npm run admin:create`, o la clave privada definida en `ADMIN_PASSWORD` | `/admin/login` |
+
+La cuenta de cliente se incluye solo en los datos iniciales locales y no tiene
+permisos administrativos. No reutilices esa contraseña en producción. Para
+registrar o restablecer la cuenta administradora, configura `ADMIN_EMAIL` y,
+opcionalmente, `ADMIN_PASSWORD` en el `.env` y ejecuta:
+
+```bash
+docker compose exec backend npm run admin:create
 ```
+
+Si `ADMIN_PASSWORD` está vacío, el comando genera una clave aleatoria y la muestra
+una única vez. Si defines la variable, requiere al menos 16 caracteres. Ejecutar
+el comando de nuevo restablece la clave de esa cuenta.
+
+Para una instalación manual, configura las mismas variables en `backend/.env` y
+ejecuta `npm run admin:create --prefix backend` después de crear el esquema SQL.
 
 ## Documentación
 

@@ -83,6 +83,7 @@ classDiagram
     class AuthController {
         +register(req,res,next) void
         +login(req,res,next) void
+        +adminLogin(req,res,next) void
     }
 
     class ProductController {

@@ -7,7 +7,7 @@ import { loginSchema } from '../schemas/authSchemas';
 import useAuth from '../hooks/useAuth';
 import Alert from '../components/Alert';
 
-export default function Login() {
+export default function Login({ adminOnly = false }) {
   const {
     register: registerField,
     handleSubmit,
@@ -15,14 +15,16 @@ export default function Login() {
   } = useForm({
     resolver: zodResolver(loginSchema),
   });
-  const { login } = useAuth();
+  const { login, loginAdmin } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
 
   const onSubmit = async (data) => {
     setError(null);
     try {
-      const user = await login(data.email, data.contrasenia);
+      const user = adminOnly
+        ? await loginAdmin(data.email, data.contrasenia)
+        : await login(data.email, data.contrasenia);
       navigate(user.rol === 'ADMIN' ? '/admin' : '/');
     } catch (err) {
       setError(err.response?.data?.error || 'Error al iniciar sesión');
@@ -34,7 +36,14 @@ export default function Login() {
       <div className="col-md-5">
         <Card className="shadow-sm">
           <Card.Body>
-            <h4 className="mb-4 text-center">Iniciar sesión</h4>
+            <h4 className="mb-2 text-center">
+              {adminOnly ? 'Acceso para administrador / vendedor' : 'Iniciar sesión'}
+            </h4>
+            {adminOnly && (
+              <p className="text-muted text-center mb-4">
+                Ingresa con una cuenta autorizada para administrar la tienda.
+              </p>
+            )}
             <Alert message={error} onClose={() => setError(null)} />
             <Form onSubmit={handleSubmit(onSubmit)}>
               <Form.Group className="mb-3">
@@ -59,9 +68,15 @@ export default function Login() {
                 Ingresar
               </Button>
             </Form>
-            <p className="text-center mt-3 mb-0">
-              ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
-            </p>
+            {adminOnly ? (
+              <p className="text-center mt-3 mb-0">
+                ¿Buscas comprar? <Link to="/login">Acceso de cliente</Link>
+              </p>
+            ) : (
+              <p className="text-center mt-3 mb-0">
+                ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
+              </p>
+            )}
           </Card.Body>
         </Card>
       </div>

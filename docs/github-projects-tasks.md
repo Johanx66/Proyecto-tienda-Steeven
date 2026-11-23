@@ -14,7 +14,7 @@ Campos sugeridos: **Type**, **Épica**, **Prioridad**, **Estado**.
 2. **Contenerizar el sistema completo (PostgreSQL + backend + frontend/Nginx) con Docker Compose** — _Tarea técnica_ · Alta · Done
    `docker-compose` con postgres, backend y frontend; auto-inicialización del esquema y seed vía `docker-entrypoint-initdb.d`.
 3. **Definir modelo de datos PostgreSQL (`usuarios`, `productos`, `pedidos`, `detalle_pedidos`)** — _Tarea técnica_ · Alta · Done
-   `schema.sql`, `init.sql` y `seed.sql` con 10 productos y usuarios ADMIN/CLIENTE de ejemplo.
+   `schema.sql`, `init.sql` y `seed.sql` con 10 productos y una cuenta CLIENTE local; la cuenta ADMIN se provisiona con `npm run admin:create`.
 
 ## Épica B — Autenticación y usuarios
 
@@ -22,6 +22,8 @@ Campos sugeridos: **Type**, **Épica**, **Prioridad**, **Estado**.
    `POST /api/auth/register` y `/api/auth/login`. Hash con bcryptjs y generación/validación de JWT.
 5. **Proteger rutas con middlewares `auth`, `adminOnly`, `errorHandler` y validación** — _Tarea técnica_ · Alta · Done
    Autorización por rol y manejo centralizado de errores.
+5a. **Separar el acceso de cliente y administrador/vendedor** — _Seguridad_ · Alta · Done
+   Login dedicado `/admin/login`, endpoint `/api/auth/admin/login` y creación segura de la cuenta inicial con clave única.
 
 ## Épica C — Catálogo y carrito
 

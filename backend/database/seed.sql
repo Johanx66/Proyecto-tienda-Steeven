@@ -12,3 +12,14 @@ INSERT INTO productos (nombre, descripcion, precio, stock, imagen_url, activo) V
 ('Limón Persa', 'Limón persa jugoso. Por kilo.', 32.00, 90, 'https://images.unsplash.com/photo-1590502593747-42a996133562?w=400', TRUE),
 ('Espinaca', 'Espinaca fresca rica en hierro. Por manojo.', 20.00, 0, 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=400', FALSE)
 ON CONFLICT DO NOTHING;
+
+-- Cuenta de prueba local para revisar la experiencia de compra (no administradora).
+INSERT INTO usuarios (nombre, email, telefono, contrasenia, rol)
+VALUES (
+  'Cliente de demostración',
+  'cliente@demo.local',
+  '+570000000001',
+  '$2a$10$B6ap6x9UODwxuTCSyqAQRewtIFz3F9K1SDZu61B4aBR3rowVpyORi',
+  'CLIENTE'
+)
+ON CONFLICT (email) DO NOTHING;

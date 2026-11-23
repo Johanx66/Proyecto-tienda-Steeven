@@ -39,6 +39,11 @@ producción sin acordar antes cómo retirarlos.
 | T-08 | Entrar al panel administrador y despachar un pedido confirmado. | El pedido cambia a `DESPACHADO`; un pedido sin confirmar no se puede despachar. | Pendiente de ejecutar con cuenta de prueba. |
 | T-09 | Activar/desactivar Telegram o push desde el perfil. | Se guarda la preferencia; la bandeja interna sigue disponible aunque no se configuren canales externos. | Pendiente de ejecutar; canales opcionales. |
 | T-10 | Reiniciar los contenedores sin borrar volúmenes. | Usuarios, productos y pedidos siguen en PostgreSQL. | Pendiente de ejecutar con Docker. |
+| T-11 | Entrar a `/admin/login` con una cuenta de cliente y luego con el administrador. Desde Productos de la tienda, agregar un producto. | La cuenta cliente no recibe sesión de administrador; el administrador accede al panel y el producto aparece en el catálogo. | Pendiente de ejecutar con las cuentas de prueba. |
+
+La cuenta de administrador local se inicializa con el comando `admin:create`;
+cuando `ADMIN_PASSWORD` queda vacío, genera y muestra una clave única una sola
+vez. Consulta el README para los pasos completos.
 
 ## Limitación del entorno de verificación
 

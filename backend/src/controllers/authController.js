@@ -21,7 +21,7 @@ async function register(req, res, next) {
   }
 }
 
-async function login(req, res, next) {
+async function authenticate(req, res, next, adminOnly = false) {
   try {
     const { email, contrasenia } = req.body;
     const user = await User.findByEmail(email);
@@ -29,7 +29,8 @@ async function login(req, res, next) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
     const valid = await bcrypt.compare(contrasenia, user.contrasenia);
-    if (!valid) {
+    const wrongLoginPortal = adminOnly ? user.rol !== 'ADMIN' : user.rol === 'ADMIN';
+    if (!valid || wrongLoginPortal) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
     const token = jwt.sign({ id: user.id, rol: user.rol }, jwtConfig.secret, {
@@ -42,4 +43,12 @@ async function login(req, res, next) {
   }
 }
 
-module.exports = { register, login };
+function login(req, res, next) {
+  return authenticate(req, res, next);
+}
+
+function adminLogin(req, res, next) {
+  return authenticate(req, res, next, true);
+}
+
+module.exports = { register, login, adminLogin };

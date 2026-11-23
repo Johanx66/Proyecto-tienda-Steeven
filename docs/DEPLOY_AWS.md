@@ -51,6 +51,10 @@ SMTP_USER=
 SMTP_PASS=
 MAIL_FROM="Tienda <no-reply@example.com>"
 VERIFICATION_TOKEN_TTL_MINUTES=30
+ADMIN_EMAIL=admin@tiendafrescos.local
+ADMIN_PASSWORD=
+ADMIN_NAME=Administrador de la tienda
+ADMIN_PHONE=+570000000000
 ```
 
 Genera valores aleatorios diferentes para `DB_PASSWORD` y `JWT_SECRET`. Para
@@ -173,15 +177,19 @@ ambas pasan, enviará la versión de ese commit a EC2. La página publicada para
 proyecto está en <https://proyectosteeven.dpdns.org>. Si se usa otra instancia o
 dominio, sustituye ese enlace por la URL que apunte a ella.
 
-La primera ejecución inicializa PostgreSQL y carga productos de ejemplo. Para
-administrar la tienda, registra tu cuenta desde la página y asígnale el rol
-`ADMIN` en la base de datos:
+La primera ejecución inicializa PostgreSQL y carga productos de ejemplo. Después
+del primer despliegue, crea la cuenta administradora:
 
 ```bash
 cd /home/ubuntu/tienda
-docker compose exec -T postgres psql -U tienda_app -d tienda_frescos \
-  -c "UPDATE usuarios SET rol = 'ADMIN' WHERE email = 'tu-correo@example.com';"
+docker compose exec backend npm run admin:create
 ```
+
+El comando genera una contraseña aleatoria y la muestra una sola vez para que la
+guardes en un gestor de contraseñas. También puedes definir `ADMIN_PASSWORD` en
+el `.env` de EC2 con una clave privada de al menos 16 caracteres. El acceso se
+realiza desde `https://TU_DOMINIO/admin/login`; la contraseña se guarda con
+bcrypt y no se incluye en el repositorio.
 
 ## 8. Actualizaciones posteriores
 
