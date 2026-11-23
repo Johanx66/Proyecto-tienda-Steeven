@@ -91,8 +91,10 @@ Omítelo en producción.
 El usuario inicial predeterminado es `admin@tiendafrescos.local`. Si no
 configuraste una clave, el comando la genera una sola vez y la muestra en la
 consola: guárdala en un gestor de contraseñas. La contraseña se guarda con bcrypt.
-El acceso del vendedor está en `http://localhost/admin/login`. No se crea una
-cuenta administradora con una contraseña pública o compartida.
+El formulario de acceso muestra pestañas separadas para **Cliente** y
+**Administrador / vendedor**; el acceso del vendedor también tiene la ruta
+directa `http://localhost/admin/login`. No se crea una cuenta administradora con
+una contraseña pública o compartida.
 Las cuentas administradoras deben usar ese acceso; el login de cliente no admite
 cuentas con rol `ADMIN`. El servidor vuelve a comprobar el rol en las rutas de
 administración y productos.

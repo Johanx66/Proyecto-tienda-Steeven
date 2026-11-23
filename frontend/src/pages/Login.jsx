@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, Button, Card } from 'react-bootstrap';
+import { Form, Button, Card, Nav } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { loginSchema } from '../schemas/authSchemas';
@@ -36,14 +36,30 @@ export default function Login({ adminOnly = false }) {
       <div className="col-md-5">
         <Card className="shadow-sm">
           <Card.Body>
-            <h4 className="mb-2 text-center">
-              {adminOnly ? 'Acceso para administrador / vendedor' : 'Iniciar sesión'}
-            </h4>
-            {adminOnly && (
-              <p className="text-muted text-center mb-4">
-                Ingresa con una cuenta autorizada para administrar la tienda.
-              </p>
-            )}
+            <h4 className="mb-4 text-center">Iniciar sesión</h4>
+            <Nav
+              variant="tabs"
+              fill
+              activeKey={adminOnly ? 'admin' : 'cliente'}
+              className="mb-4"
+              aria-label="Tipo de cuenta"
+            >
+              <Nav.Item>
+                <Nav.Link as={Link} to="/login" eventKey="cliente">
+                  Cliente
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link as={Link} to="/admin/login" eventKey="admin">
+                  Administrador / vendedor
+                </Nav.Link>
+              </Nav.Item>
+            </Nav>
+            <p className="text-muted text-center mb-4">
+              {adminOnly
+                ? 'Ingresa con una cuenta autorizada para administrar la tienda.'
+                : 'Ingresa con tu cuenta de cliente para comprar.'}
+            </p>
             <Alert message={error} onClose={() => setError(null)} />
             <Form onSubmit={handleSubmit(onSubmit)}>
               <Form.Group className="mb-3">
@@ -68,11 +84,7 @@ export default function Login({ adminOnly = false }) {
                 Ingresar
               </Button>
             </Form>
-            {adminOnly ? (
-              <p className="text-center mt-3 mb-0">
-                ¿Buscas comprar? <Link to="/login">Acceso de cliente</Link>
-              </p>
-            ) : (
+            {!adminOnly && (
               <p className="text-center mt-3 mb-0">
                 ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
               </p>

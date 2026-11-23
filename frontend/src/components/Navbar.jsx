@@ -57,12 +57,7 @@ export default function Navbar() {
               <>
                 <li className="nav-item">
                   <Link className="nav-link" to="/login">
-                    Acceso cliente
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/admin/login">
-                    Acceso administrador
+                    Iniciar sesión
                   </Link>
                 </li>
                 <li className="nav-item">
