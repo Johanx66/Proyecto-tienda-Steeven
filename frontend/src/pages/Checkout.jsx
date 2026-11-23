@@ -94,8 +94,8 @@ export default function Checkout() {
                   <Form.Label>Correo de confirmación</Form.Label>
                   <Form.Control value={user?.email || ''} disabled />
                   <Form.Text className="text-muted">
-                    Recibirás un correo con un enlace para autorizar tu compra. El inventario
-                    se descuenta al enviar el pedido y se libera si lo rechazas o vence el enlace.
+                    Recibirás un correo con un enlace para autorizar tu compra. El inventario se
+                    descuenta al enviar el pedido y se libera si lo rechazas o vence el enlace.
                   </Form.Text>
                 </Form.Group>
                 <Button type="submit" variant="success" size="lg" disabled={submitting}>

@@ -3,8 +3,7 @@ import useCart from '../hooks/useCart';
 
 export default function ProductCard({ product }) {
   const { items, addItem } = useCart();
-  const cantidadEnCarrito =
-    items.find((item) => item.producto_id === product.id)?.cantidad || 0;
+  const cantidadEnCarrito = items.find((item) => item.producto_id === product.id)?.cantidad || 0;
   const stockDisponible = Math.max(0, product.stock - cantidadEnCarrito);
   const sinStock = stockDisponible <= 0;
 
