@@ -52,7 +52,7 @@ async function notifyOrderConfirmed(order, user) {
       (async () => {
         const chatId = await Notification.getTelegramChatId(user.id);
         if (chatId) {
-          await sendTelegramMessage(chatId, notification.message);
+          await sendTelegramMessage(chatId, notification.mensaje);
         }
       })()
     );
@@ -71,7 +71,7 @@ async function notifyOrderConfirmed(order, user) {
             subscription,
             JSON.stringify({
               title: notification.titulo,
-              body: notification.message,
+              body: notification.mensaje,
               url: '/mis-pedidos',
             })
           )
