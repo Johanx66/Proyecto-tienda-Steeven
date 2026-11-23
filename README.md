@@ -81,8 +81,12 @@ si lo dejas vacío, el programa generará una clave aleatoria en la primera
 ejecución. En una segunda terminal, ejecuta:
 
 ```bash
+docker compose exec -T postgres psql -U postgres -d tienda_frescos -f /seed_demo_client.sql
 docker compose exec backend npm run admin:create
 ```
+
+El primer comando crea la cuenta cliente de demostración para desarrollo local.
+Omítelo en producción.
 
 El usuario inicial predeterminado es `admin@tiendafrescos.local`. Si no
 configuraste una clave, el comando la genera una sola vez y la muestra en la
@@ -262,21 +266,25 @@ migraciones de `backend/database/migrations/`.
 
 ## Datos de ejemplo (seed)
 
-Al cargar `backend/database/seed.sql` se crean 10 productos de ejemplo y una
-cuenta de cliente de demostración para desarrollo local.
+Al cargar `backend/database/seed.sql` se crean 10 productos de ejemplo. La cuenta
+de cliente de demostración se carga aparte y solo cuando se pide explícitamente.
 
 ## Accesos de prueba locales
 
-Al ejecutar la carga inicial de productos se crea también esta cuenta de cliente
-para probar el flujo de compra:
+Para desarrollo local, ejecuta este comando para crear la cuenta y probar el
+flujo de compra:
+
+```bash
+docker compose exec -T postgres psql -U postgres -d tienda_frescos -f /seed_demo_client.sql
+```
 
 | Rol | Usuario | Contraseña | Acceso |
 |-----|---------|------------|--------|
 | Cliente (solo desarrollo local) | `cliente@demo.local` | `ClienteDemo2026!` | `/login` |
 | Administrador/vendedor | `admin@tiendafrescos.local` | Generada una vez por `npm run admin:create`, o la clave privada definida en `ADMIN_PASSWORD` | `/admin/login` |
 
-La cuenta de cliente se incluye solo en los datos iniciales locales y no tiene
-permisos administrativos. No reutilices esa contraseña en producción. Para
+La cuenta de cliente es solo para desarrollo local y no tiene permisos
+administrativos. No reutilices esa contraseña en producción. Para
 registrar o restablecer la cuenta administradora, configura `ADMIN_EMAIL` y,
 opcionalmente, `ADMIN_PASSWORD` en el `.env` y ejecuta:
 
