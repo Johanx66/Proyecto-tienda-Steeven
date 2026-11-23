@@ -264,7 +264,7 @@ export default function NotificationSettings() {
                     . Después debe registrar el webhook del bot en el servidor.
                   </Alert>
                 )}
-                {data.integrations.telegramAvailable && (
+                {!preferences.telegram_vinculado && data.integrations.telegramAvailable && (
                   <small className="d-block text-muted">
                     Si el bot no responde al vincular, el administrador debe ejecutar{' '}
                     <code>docker compose exec backend npm run telegram:webhook</code> en el
