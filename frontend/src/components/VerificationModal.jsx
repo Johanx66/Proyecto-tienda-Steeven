@@ -1,4 +1,4 @@
-import { Modal, Button } from 'react-bootstrap';
+import { Alert, Modal, Button } from 'react-bootstrap';
 import { useState, useEffect, useRef } from 'react';
 import api from '../services/api';
 
@@ -10,7 +10,14 @@ const ESTADO_LABELS = {
   DESPACHADO: { text: 'Pedido despachado', variant: 'info' },
 };
 
-export default function VerificationModal({ show, pedidoId, email, onClose, onConfirmed }) {
+export default function VerificationModal({
+  show,
+  pedidoId,
+  email,
+  emailSent,
+  onClose,
+  onConfirmed,
+}) {
   const [estado, setEstado] = useState('PENDIENTE_VERIFICACION');
   const [elapsed, setElapsed] = useState(0);
   const intervalRef = useRef(null);
@@ -22,7 +29,7 @@ export default function VerificationModal({ show, pedidoId, email, onClose, onCo
   }, [onConfirmed]);
 
   useEffect(() => {
-    if (show && pedidoId) {
+    if (show && pedidoId && emailSent !== false) {
       setEstado('PENDIENTE_VERIFICACION');
       setElapsed(0);
 
@@ -48,10 +55,10 @@ export default function VerificationModal({ show, pedidoId, email, onClose, onCo
       clearInterval(intervalRef.current);
       clearInterval(timerRef.current);
     };
-  }, [show, pedidoId]);
+  }, [show, pedidoId, emailSent]);
 
   const label = ESTADO_LABELS[estado] || ESTADO_LABELS.PENDIENTE_VERIFICACION;
-  const finalizado = estado !== 'PENDIENTE_VERIFICACION';
+  const finalizado = estado !== 'PENDIENTE_VERIFICACION' || emailSent === false;
 
   return (
     <Modal
@@ -61,10 +68,17 @@ export default function VerificationModal({ show, pedidoId, email, onClose, onCo
       keyboard={finalizado}
     >
       <Modal.Header>
-        <Modal.Title>Confirmación por Correo en Curso</Modal.Title>
+        <Modal.Title>
+          {emailSent === false ? 'Pedido registrado' : 'Confirmación por correo en curso'}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body className="text-center">
-        {!finalizado ? (
+        {emailSent === false ? (
+          <Alert variant="warning" className="text-start">
+            El servidor está en modo de prueba y no envió un correo. El pedido no puede confirmarse
+            desde tu bandeja de entrada; contacta al administrador para configurar el envío real.
+          </Alert>
+        ) : !finalizado ? (
           <>
             <div className="mb-3">
               <div

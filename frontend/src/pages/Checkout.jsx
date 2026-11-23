@@ -19,6 +19,7 @@ export default function Checkout() {
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [pedidoId, setPedidoId] = useState(null);
+  const [emailSent, setEmailSent] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
   const {
@@ -53,6 +54,7 @@ export default function Checkout() {
       };
       const order = await createOrder(payload);
       setPedidoId(order.id);
+      setEmailSent(order.emailSent);
       setShowModal(true);
       clearCart();
     } catch (err) {
@@ -132,6 +134,7 @@ export default function Checkout() {
         show={showModal}
         pedidoId={pedidoId}
         email={user?.email}
+        emailSent={emailSent}
         onClose={handleModalClose}
         onConfirmed={() => {}}
       />

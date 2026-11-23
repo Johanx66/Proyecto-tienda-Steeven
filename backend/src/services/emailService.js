@@ -1,4 +1,10 @@
-const { transporter, mailFrom, mockMode } = require('../config/mailer');
+const {
+  transporter,
+  mailFrom,
+  mockMode,
+  smtpConfigured,
+  missingSettings,
+} = require('../config/mailer');
 
 function buildActionUrl(token, action) {
   const base = process.env.WEBHOOK_BASE_URL || 'http://localhost:5000';
@@ -45,7 +51,11 @@ async function sendOrderConfirmation(order, user, token) {
     console.log(`  Para: ${user.email}`);
     console.log(`  Autorizar: ${approveUrl}`);
     console.log(`  Reportar fraude: ${rejectUrl}`);
-    return { mock: true, approveUrl, rejectUrl };
+    return { sent: false, mode: 'mock' };
+  }
+
+  if (!smtpConfigured || !transporter) {
+    throw new Error(`SMTP incompleto. Configura: ${missingSettings.join(', ')}.`);
   }
 
   try {
@@ -55,7 +65,7 @@ async function sendOrderConfirmation(order, user, token) {
       subject,
       html,
     });
-    return info;
+    return { sent: true, mode: 'smtp', messageId: info.messageId };
   } catch (err) {
     console.error('Error al enviar correo de confirmación:', err.message);
     throw err;

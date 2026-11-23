@@ -1,16 +1,28 @@
 const crypto = require('node:crypto');
 const Notification = require('../models/Notification');
 const { vapidConfigured, sendTelegramLinkMessage } = require('../services/notificationService');
+const {
+  mockMode,
+  smtpConfigured,
+  missingSettings: mailMissingSettings,
+} = require('../config/mailer');
 
 function getConfiguration() {
+  const telegramRequired = [
+    'TELEGRAM_BOT_TOKEN',
+    'TELEGRAM_BOT_USERNAME',
+    'TELEGRAM_WEBHOOK_SECRET',
+  ];
+  const pushRequired = ['VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY', 'VAPID_SUBJECT'];
   return {
+    emailMode: mockMode ? 'mock' : smtpConfigured ? 'smtp' : 'misconfigured',
+    emailAvailable: !mockMode && smtpConfigured,
+    emailMissingSettings: mockMode ? [] : mailMissingSettings,
     telegramBotUsername: process.env.TELEGRAM_BOT_USERNAME || null,
-    telegramAvailable: Boolean(
-      process.env.TELEGRAM_BOT_TOKEN &&
-      process.env.TELEGRAM_BOT_USERNAME &&
-      process.env.TELEGRAM_WEBHOOK_SECRET
-    ),
+    telegramAvailable: telegramRequired.every((name) => Boolean(process.env[name])),
+    telegramMissingSettings: telegramRequired.filter((name) => !process.env[name]),
     pushAvailable: vapidConfigured,
+    pushMissingSettings: pushRequired.filter((name) => !process.env[name]),
     vapidPublicKey: vapidConfigured ? process.env.VAPID_PUBLIC_KEY : null,
   };
 }

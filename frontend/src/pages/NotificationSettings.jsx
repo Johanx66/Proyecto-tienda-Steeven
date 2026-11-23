@@ -187,10 +187,26 @@ export default function NotificationSettings() {
         <Card className="shadow-sm mb-4">
           <Card.Body>
             <h5>Correo electrónico</h5>
-            <p className="text-muted mb-0">
-              La confirmación antifraude del pedido continúa enviándose por correo. Este canal forma
-              parte del proceso de compra y no se desactiva desde aquí.
-            </p>
+            {data.integrations.emailMode === 'mock' ? (
+              <Alert variant="warning" className="mb-0">
+                El servidor está en modo de prueba y no envía correos. El administrador debe poner
+                <code> MAIL_MOCK=false </code> y configurar las credenciales SMTP en el servidor.
+              </Alert>
+            ) : !data.integrations.emailAvailable ? (
+              <Alert variant="danger" className="mb-0">
+                Falta configurar en el servidor:{' '}
+                {data.integrations.emailMissingSettings.map((name) => (
+                  <code key={name} className="me-1">
+                    {name}
+                  </code>
+                ))}
+              </Alert>
+            ) : (
+              <Alert variant="success" className="mb-0">
+                Las variables SMTP están configuradas. Si el correo no aparece, revisa también spam
+                y los registros del backend.
+              </Alert>
+            )}
           </Card.Body>
         </Card>
 
@@ -238,8 +254,21 @@ export default function NotificationSettings() {
                   </Button>
                 )}
                 {!data.integrations.telegramAvailable && (
-                  <small className="text-muted">
-                    Telegram aún no está configurado por la tienda.
+                  <Alert variant="warning" className="mb-0">
+                    El administrador debe configurar:{' '}
+                    {data.integrations.telegramMissingSettings.map((name) => (
+                      <code key={name} className="me-1">
+                        {name}
+                      </code>
+                    ))}
+                    . Después debe registrar el webhook del bot en el servidor.
+                  </Alert>
+                )}
+                {data.integrations.telegramAvailable && (
+                  <small className="d-block text-muted">
+                    Si el bot no responde al vincular, el administrador debe ejecutar{' '}
+                    <code>docker compose exec backend npm run telegram:webhook</code> en el
+                    servidor.
                   </small>
                 )}
               </div>
@@ -282,9 +311,15 @@ export default function NotificationSettings() {
                     </Button>
                   )}
                 {!data.integrations.pushAvailable && (
-                  <small className="text-muted">
-                    Push web aún no está configurado por la tienda.
-                  </small>
+                  <Alert variant="warning" className="mt-2 mb-0">
+                    El administrador debe configurar:{' '}
+                    {data.integrations.pushMissingSettings.map((name) => (
+                      <code key={name} className="me-1">
+                        {name}
+                      </code>
+                    ))}
+                    . Después, permite las notificaciones en este navegador. Requiere HTTPS.
+                  </Alert>
                 )}
               </div>
               <Form.Check

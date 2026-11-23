@@ -1,6 +1,7 @@
 const pool = require('../config/db');
 const Order = require('../models/Order');
 const { createOrderVerification, processOrderWithEmail } = require('../services/orderService');
+const { releaseExpiredOrders } = require('../services/orderExpirationService');
 const { ORDER_STATES } = require('../utils/constants');
 
 async function create(req, res, next) {
@@ -65,11 +66,29 @@ async function create(req, res, next) {
 
     await client.query('COMMIT');
 
-    processOrderWithEmail(order, req.user, verification).catch((err) =>
-      console.error(`Error al procesar verificación del pedido ${order.id}:`, err.message)
-    );
+    let emailDelivery;
+    try {
+      emailDelivery = await processOrderWithEmail(order, req.user, verification);
+    } catch (err) {
+      console.error(`Error al procesar verificación del pedido ${order.id}:`, err.message);
+      try {
+        await releaseExpiredOrders({ verificationId: verification.id, limit: 1 });
+      } catch (releaseError) {
+        console.error(
+          `No se pudo liberar inmediatamente el stock del pedido ${order.id}:`,
+          releaseError.message
+        );
+      }
+      return res.status(502).json({
+        error: `El pedido #${order.id} se creó, pero no se pudo enviar la confirmación por correo. Revisa la configuración SMTP; si el envío falló, se liberará el stock reservado.`,
+        orderId: order.id,
+        emailSent: false,
+      });
+    }
 
-    res.status(201).json(order);
+    res
+      .status(201)
+      .json({ ...order, emailSent: emailDelivery.sent, emailMode: emailDelivery.mode });
   } catch (err) {
     await client.query('ROLLBACK');
     next(err);

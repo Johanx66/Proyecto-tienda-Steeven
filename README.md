@@ -169,6 +169,8 @@ sin configurar nada). Para enviar correos reales:
    MAIL_FROM=Frutería Web <tu_correo@gmail.com>
    ```
 
+   En Docker, comprueba que SMTP esté listo con `docker compose exec backend npm run mail:verify`.
+
 3. Ajusta `WEBHOOK_BASE_URL` a la URL pública desde la que se abrirá el enlace del
    correo (`http://localhost:5000` en local, o tu dominio/ngrok si pruebas desde
    otro dispositivo).
@@ -269,6 +271,11 @@ Para push web, genera claves VAPID dentro del backend con
 `VAPID_PRIVATE_KEY` y `VAPID_SUBJECT`. El navegador solicita permiso cuando el
 usuario activa push desde su perfil. En producción se requiere HTTPS; los avisos
 push dependen del soporte del navegador y de sus permisos.
+
+La página **Perfil y notificaciones** muestra si el servidor está en modo de
+prueba o qué variables de integración faltan. Si reemplazas las claves VAPID,
+cada cliente debe desactivar y volver a activar push en cada navegador para crear
+una nueva suscripción.
 
 Las tablas nuevas se aplican automáticamente al arrancar el backend mediante las
 migraciones de `backend/database/migrations/`.

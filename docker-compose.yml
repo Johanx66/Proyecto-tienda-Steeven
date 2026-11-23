@@ -45,7 +45,7 @@ services:
       ADMIN_PHONE: ${ADMIN_PHONE:-+570000000000}
       FRONTEND_URL: ${FRONTEND_URL:?Define FRONTEND_URL in the server .env file}
       WEBHOOK_BASE_URL: ${WEBHOOK_BASE_URL:?Define WEBHOOK_BASE_URL in the server .env file}
-      MAIL_MOCK: ${MAIL_MOCK:-true}
+      MAIL_MOCK: ${MAIL_MOCK:-false}
       SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
       SMTP_PORT: ${SMTP_PORT:-465}
       SMTP_SECURE: ${SMTP_SECURE:-true}

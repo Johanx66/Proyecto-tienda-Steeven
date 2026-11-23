@@ -9,8 +9,11 @@ async function createOrderVerification(client, orderId) {
 
 async function processOrderWithEmail(order, user, verification) {
   try {
-    await emailService.sendOrderConfirmation(order, user, verification.token);
-    console.log(`Pedido ${order.id}: correo de confirmación enviado a ${user.email}`);
+    const delivery = await emailService.sendOrderConfirmation(order, user, verification.token);
+    if (delivery.sent) {
+      console.log(`Pedido ${order.id}: correo de confirmación enviado a ${user.email}`);
+    }
+    return delivery;
   } catch (err) {
     console.error(`Error al enviar correo para pedido ${order.id}:`, err.message);
     await OrderVerification.updateEstado(verification.id, VERIFICATION_STATES.EXPIRADO);

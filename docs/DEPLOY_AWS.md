@@ -43,24 +43,43 @@ JWT_EXPIRES_IN=7d
 FRONTEND_URL=https://TU_DOMINIO
 WEBHOOK_BASE_URL=https://TU_DOMINIO
 FRONTEND_PORT=127.0.0.1:8080
-MAIL_MOCK=true
+MAIL_MOCK=false
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=465
 SMTP_SECURE=true
-SMTP_USER=
-SMTP_PASS=
-MAIL_FROM="Tienda <no-reply@example.com>"
+SMTP_USER=tu_correo@gmail.com
+SMTP_PASS=tu_contrasena_de_aplicacion
+MAIL_FROM="Tienda <tu_correo@gmail.com>"
 VERIFICATION_TOKEN_TTL_MINUTES=30
 ADMIN_EMAIL=admin@tiendafrescos.local
 ADMIN_PASSWORD=
 ADMIN_NAME=Administrador de la tienda
 ADMIN_PHONE=+570000000000
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_BOT_USERNAME=
+TELEGRAM_WEBHOOK_SECRET=
+VAPID_PUBLIC_KEY=
+VAPID_PRIVATE_KEY=
+VAPID_SUBJECT=mailto:tu_correo@gmail.com
 ```
 
 Genera valores aleatorios diferentes para `DB_PASSWORD` y `JWT_SECRET`. Para
-correo real, cambia `MAIL_MOCK=false` y completa las variables SMTP.
+correo real, `MAIL_MOCK` debe permanecer en `false`; usa una contraseña de
+aplicación de Gmail en `SMTP_PASS` (no la contraseña normal de la cuenta), y
+configura `SMTP_USER` y `MAIL_FROM` con la cuenta autorizada. Comprueba la conexión
+sin enviar un correo con `docker compose exec backend npm run mail:verify`.
 `FRONTEND_PORT=127.0.0.1:8080` deja el frontend en el host local; Caddy lo publica
 en los puertos 80 y 443.
+
+Para Telegram, crea un bot con `@BotFather`, guarda el token y nombre de usuario
+en las variables `TELEGRAM_*` (genera `TELEGRAM_WEBHOOK_SECRET` aleatoriamente).
+Para avisos push, genera un par VAPID en el servidor con
+`docker compose exec backend npx web-push generate-vapid-keys` y copia ambas claves
+en `VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY`; mantén la privada solo en el `.env`
+del servidor. Después de completar `.env`, vuelve a crear los contenedores con
+`docker compose --profile production up -d --build` y registra Telegram con
+`docker compose exec backend npm run telegram:webhook`. La tienda debe ser accesible
+por HTTPS para que push funcione.
 
 Caddy usa el `Caddyfile` del repositorio, obtiene y renueva automáticamente el
 certificado HTTPS y redirige `www` al dominio principal. Antes de desplegar, crea
