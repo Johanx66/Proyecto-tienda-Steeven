@@ -1,16 +1,25 @@
 const webpush = require('web-push');
 const Notification = require('../models/Notification');
 
-const vapidConfigured = Boolean(
+const vapidValuesPresent = Boolean(
   process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY && process.env.VAPID_SUBJECT
 );
+let vapidConfigured = false;
+let vapidConfigurationError = null;
 
-if (vapidConfigured) {
-  webpush.setVapidDetails(
-    process.env.VAPID_SUBJECT,
-    process.env.VAPID_PUBLIC_KEY,
-    process.env.VAPID_PRIVATE_KEY
-  );
+if (vapidValuesPresent) {
+  try {
+    webpush.setVapidDetails(
+      process.env.VAPID_SUBJECT,
+      process.env.VAPID_PUBLIC_KEY,
+      process.env.VAPID_PRIVATE_KEY
+    );
+    vapidConfigured = true;
+  } catch {
+    vapidConfigurationError =
+      'La configuración VAPID no es válida. Revisa VAPID_SUBJECT y que ambas claves correspondan.';
+    console.error(vapidConfigurationError);
+  }
 }
 
 async function sendTelegramMessage(chatId, text) {
@@ -93,4 +102,9 @@ async function sendTelegramLinkMessage(chatId, message) {
   }
 }
 
-module.exports = { notifyOrderConfirmed, sendTelegramLinkMessage, vapidConfigured };
+module.exports = {
+  notifyOrderConfirmed,
+  sendTelegramLinkMessage,
+  vapidConfigured,
+  vapidConfigurationError,
+};

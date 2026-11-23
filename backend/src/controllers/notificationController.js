@@ -1,6 +1,10 @@
 const crypto = require('node:crypto');
 const Notification = require('../models/Notification');
-const { vapidConfigured, sendTelegramLinkMessage } = require('../services/notificationService');
+const {
+  vapidConfigured,
+  vapidConfigurationError,
+  sendTelegramLinkMessage,
+} = require('../services/notificationService');
 const {
   mockMode,
   smtpConfigured,
@@ -23,6 +27,7 @@ function getConfiguration() {
     telegramMissingSettings: telegramRequired.filter((name) => !process.env[name]),
     pushAvailable: vapidConfigured,
     pushMissingSettings: pushRequired.filter((name) => !process.env[name]),
+    pushConfigurationError: vapidConfigurationError,
     vapidPublicKey: vapidConfigured ? process.env.VAPID_PUBLIC_KEY : null,
   };
 }

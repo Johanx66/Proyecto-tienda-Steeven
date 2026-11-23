@@ -312,13 +312,21 @@ export default function NotificationSettings() {
                   )}
                 {!data.integrations.pushAvailable && (
                   <Alert variant="warning" className="mt-2 mb-0">
-                    El administrador debe configurar:{' '}
-                    {data.integrations.pushMissingSettings.map((name) => (
-                      <code key={name} className="me-1">
-                        {name}
-                      </code>
-                    ))}
-                    . Después, permite las notificaciones en este navegador. Requiere HTTPS.
+                    {data.integrations.pushMissingSettings.length > 0 ? (
+                      <>
+                        El administrador debe configurar:{' '}
+                        {data.integrations.pushMissingSettings.map((name) => (
+                          <code key={name} className="me-1">
+                            {name}
+                          </code>
+                        ))}
+                        .
+                      </>
+                    ) : (
+                      data.integrations.pushConfigurationError ||
+                      'La configuración de notificaciones web no es válida.'
+                    )}{' '}
+                    Después, permite las notificaciones en este navegador. Requiere HTTPS.
                   </Alert>
                 )}
               </div>
