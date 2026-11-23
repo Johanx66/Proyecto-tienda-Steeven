@@ -22,7 +22,7 @@ Campos sugeridos: **Type**, **Épica**, **Prioridad**, **Estado**.
    `POST /api/auth/register` y `/api/auth/login`. Hash con bcryptjs y generación/validación de JWT.
 5. **Proteger rutas con middlewares `auth`, `adminOnly`, `errorHandler` y validación** — _Tarea técnica_ · Alta · Done
    Autorización por rol y manejo centralizado de errores.
-5a. **Separar el acceso de cliente y administrador/vendedor** — _Seguridad_ · Alta · Done
+5a. **Separar el acceso de cliente y administrador** — _Seguridad_ · Alta · Done
    Login dedicado `/admin/login`, endpoint `/api/auth/admin/login` y creación segura de la cuenta inicial con clave única.
 
 ## Épica C — Catálogo y carrito

@@ -75,7 +75,7 @@ perfil `production`, termina HTTPS y redirige `www` al dominio principal. Para e
 envío real de correos, rellena las credenciales SMTP en `.env` (o deja
 `MAIL_MOCK=true` en desarrollo).
 
-Para crear el acceso del administrador/vendedor, puedes definir `ADMIN_PASSWORD`
+Para crear el acceso de administrador, puedes definir `ADMIN_PASSWORD`
 en `.env` para elegir una clave;
 si lo dejas vacío, el programa generará una clave aleatoria en la primera
 ejecución. En una segunda terminal, ejecuta:
@@ -91,8 +91,8 @@ Omítelo en producción.
 El usuario inicial predeterminado es `admin@tiendafrescos.local`. Si no
 configuraste una clave, el comando la genera una sola vez y la muestra en la
 consola: guárdala en un gestor de contraseñas. La contraseña se guarda con bcrypt.
-El formulario de acceso muestra pestañas separadas para **Cliente** y **Vendedor**;
-el acceso del vendedor también tiene la ruta
+El formulario de acceso muestra pestañas separadas para **Cliente** y
+**Administrador**; el acceso de administración también tiene la ruta
 directa `http://localhost/admin/login`. No se crea una cuenta administradora con
 una contraseña pública o compartida.
 Las cuentas administradoras deben usar ese acceso; el login de cliente no admite
@@ -283,7 +283,7 @@ docker compose exec -T postgres psql -U postgres -d tienda_frescos -f /seed_demo
 | Rol | Usuario | Contraseña | Acceso |
 |-----|---------|------------|--------|
 | Cliente (solo desarrollo local) | `cliente@demo.local` | `ClienteDemo2026!` | `/login` |
-| Vendedor | `admin@tiendafrescos.local` | Generada una vez por `npm run admin:create`, o la clave privada definida en `ADMIN_PASSWORD` | `/admin/login` |
+| Administrador | `admin@tiendafrescos.local` | Generada una vez por `npm run admin:create`, o la clave privada definida en `ADMIN_PASSWORD` | `/admin/login` |
 
 La cuenta de cliente es solo para desarrollo local y no tiene permisos
 administrativos. No reutilices esa contraseña en producción. Para

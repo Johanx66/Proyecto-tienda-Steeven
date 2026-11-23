@@ -40,7 +40,7 @@ producción sin acordar antes cómo retirarlos.
 | T-09 | Activar/desactivar Telegram o push desde el perfil. | Se guarda la preferencia; la bandeja interna sigue disponible aunque no se configuren canales externos. | Pendiente de ejecutar; canales opcionales. |
 | T-10 | Reiniciar los contenedores sin borrar volúmenes. | Usuarios, productos y pedidos siguen en PostgreSQL. | Pendiente de ejecutar con Docker. |
 | T-11 | Entrar a `/admin/login` con una cuenta de cliente y luego con el administrador. Desde Productos de la tienda, agregar un producto. | La cuenta cliente no recibe sesión de administrador; el administrador accede al panel y el producto aparece en el catálogo. | Pendiente de ejecutar con las cuentas de prueba. |
-| T-12 | Abrir el acceso desde la tienda y cambiar entre las pestañas Cliente y Vendedor. | Cada pestaña muestra el acceso correcto; la pestaña activa coincide con el formulario. | Pendiente de verificación manual en navegador. |
+| T-12 | Abrir el acceso desde la tienda y cambiar entre las pestañas Cliente y Administrador. | Cada pestaña muestra el acceso correcto; la pestaña activa coincide con el formulario. | Pendiente de verificación manual en navegador. |
 
 La cuenta de administrador local se inicializa con el comando `admin:create`;
 cuando `ADMIN_PASSWORD` queda vacío, genera y muestra una clave única una sola

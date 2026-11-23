@@ -4,7 +4,7 @@ Title,Type,Epica,Prioridad,Estado,Descripcion
 "Definir modelo de datos PostgreSQL (usuarios, productos, pedidos, detalle_pedidos)","Tarea tecnica","Arquitectura base","Alta","Done","Crear schema.sql, init.sql y seed.sql con 10 productos y una cuenta CLIENTE local; el administrador se crea mediante admin:create."
 "Implementar registro y login de usuarios con JWT","Historia de usuario","Autenticacion","Alta","Done","POST /api/auth/register y /api/auth/login. Hash con bcryptjs y generacion/validacion de JWT."
 "Proteger rutas con middlewares auth, adminOnly, errorHandler y validacion","Tarea tecnica","Autenticacion","Alta","Done","Middlewares de autorizacion por rol y manejo centralizado de errores."
-"Separar el acceso de cliente y administrador/vendedor","Seguridad","Autenticacion","Alta","Done","Login dedicado en /admin/login y aprovisionamiento seguro del usuario administrador."
+"Separar el acceso de cliente y administrador","Seguridad","Autenticacion","Alta","Done","Login dedicado en /admin/login y aprovisionamiento seguro del usuario administrador."
 "Construir catalogo de productos y carrito de compras reactivo","Historia de usuario","Catalogo y carrito","Alta","Done","Vista de tienda con productos activos, Context API de carrito y CartDrawer."
 "Implementar panel de administracion de productos (CRUD)","Historia de usuario","Catalogo y carrito","Media","Done","Crear y editar productos: precio, descripcion, stock y estado activo."
 "Crear pedidos transaccionales en PENDIENTE_VERIFICACION desde el checkout","Historia de usuario","Pedidos","Alta","Done","POST /api/pedidos crea pedido con detalle y descuenta stock al confirmar. Historial en /api/pedidos/mis-pedidos."

@@ -9,7 +9,7 @@ export default function AdminPanel() {
   return (
     <Card className="shadow-sm">
       <Card.Body>
-        <h4 className="mb-4">Panel del administrador / vendedor</h4>
+        <h4 className="mb-4">Panel del administrador</h4>
         <Nav variant="tabs" activeKey={tab} onSelect={(k) => setTab(k)} className="mb-4">
           <Nav.Item>
             <Nav.Link eventKey="pedidos">Pedidos</Nav.Link>
